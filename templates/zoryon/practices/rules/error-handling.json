@@ -1,0 +1,207 @@
+{
+  "id": "error-handling",
+  "name": "Error Handling Best Practices",
+  "description": "Verifica tratamento de erros e resiliencia",
+
+  "checks": [
+    {
+      "id": "error-boundary",
+      "name": "Error Boundaries",
+      "description": "Verifica presenca de error boundaries",
+      "severity": "high",
+      "files": {
+        "required": [
+          "src/app/error.tsx",
+          "error.tsx"
+        ],
+        "recommended": [
+          "src/app/global-error.tsx",
+          "global-error.tsx"
+        ]
+      },
+      "patterns": {
+        "customBoundary": {
+          "regex": "class\\s+\\w+\\s+extends\\s+(?:React\\.)?Component[^}]*componentDidCatch",
+          "description": "Error boundary customizado"
+        },
+        "reactErrorBoundary": {
+          "regex": "import[^;]*ErrorBoundary[^;]*from[^;]*react-error-boundary",
+          "description": "Usando react-error-boundary"
+        }
+      }
+    },
+    {
+      "id": "not-found",
+      "name": "Pagina 404",
+      "description": "Verifica pagina 404 customizada",
+      "severity": "medium",
+      "files": {
+        "required": [
+          "src/app/not-found.tsx",
+          "not-found.tsx"
+        ]
+      }
+    },
+    {
+      "id": "try-catch-api",
+      "name": "Try-Catch em APIs",
+      "description": "Verifica tratamento de erros em API routes",
+      "severity": "high",
+      "patterns": {
+        "missingTryCatch": {
+          "regex": "export\\s+async\\s+function\\s+(?:GET|POST|PUT|DELETE|PATCH)\\s*\\([^)]*\\)\\s*{(?![^}]*try)",
+          "message": "API route sem try-catch"
+        },
+        "emptyError": {
+          "regex": "catch\\s*\\([^)]*\\)\\s*{\\s*}",
+          "message": "Catch vazio - erros sendo engolidos"
+        },
+        "consoleError": {
+          "regex": "catch[^}]*console\\.error[^}]*(?!return|throw|Response)",
+          "message": "Erro logado mas nao tratado adequadamente"
+        }
+      },
+      "fix": "Sempre trate erros e retorne resposta apropriada"
+    },
+    {
+      "id": "async-error-handling",
+      "name": "Tratamento de Erros Assincronos",
+      "description": "Verifica tratamento em operacoes async",
+      "severity": "high",
+      "patterns": {
+        "unhandledPromise": {
+          "regex": "(?:fetch|axios)[^;]*(?!await|then|catch|\\.catch)",
+          "message": "Promise sem tratamento de erro"
+        },
+        "awaitNoTry": {
+          "regex": "await\\s+(?:fetch|axios)[^;]*(?<!try[^}]*)$",
+          "message": "Await sem try-catch envolvente"
+        },
+        "thenNoCatch": {
+          "regex": "\\.then\\([^)]*\\)(?!\\.catch|\\s*\\.finally)",
+          "message": "Promise com then mas sem catch"
+        }
+      }
+    },
+    {
+      "id": "user-feedback",
+      "name": "Feedback ao Usuario",
+      "description": "Verifica se erros mostram feedback ao usuario",
+      "severity": "medium",
+      "patterns": {
+        "silentError": {
+          "description": "Erros que nao informam o usuario"
+        },
+        "technicalError": {
+          "regex": "error\\.message|error\\.stack",
+          "message": "Evite mostrar detalhes tecnicos ao usuario"
+        }
+      },
+      "recommendations": [
+        "Mostre mensagens amigaveis ao usuario",
+        "Esconda detalhes tecnicos",
+        "Ofereça opcoes de recuperacao (retry, voltar)"
+      ]
+    },
+    {
+      "id": "logging-errors",
+      "name": "Logging de Erros",
+      "description": "Verifica se erros sao logados adequadamente",
+      "severity": "medium",
+      "patterns": {
+        "noLogging": {
+          "regex": "catch\\s*\\([^)]*\\)\\s*{(?![^}]*(?:console|logger|log|Sentry|bugsnag))",
+          "message": "Erro capturado mas nao logado"
+        }
+      },
+      "recommendations": [
+        "Use servico de monitoramento (Sentry, Bugsnag)",
+        "Inclua contexto relevante nos logs",
+        "Nao logue dados sensiveis"
+      ]
+    },
+    {
+      "id": "error-types",
+      "name": "Tipagem de Erros",
+      "description": "Verifica tipagem de erros em TypeScript",
+      "severity": "low",
+      "patterns": {
+        "anyError": {
+          "regex": "catch\\s*\\(\\s*(?:e|err|error)\\s*\\)",
+          "message": "Erro sem tipo - considere usar unknown"
+        },
+        "betterPattern": {
+          "example": "catch (error) { if (error instanceof Error) { ... } }"
+        }
+      }
+    },
+    {
+      "id": "fallback-ui",
+      "name": "UI de Fallback",
+      "description": "Verifica presenca de estados de erro na UI",
+      "severity": "medium",
+      "patterns": {
+        "suspenseFallback": {
+          "regex": "<Suspense[^>]*fallback=",
+          "description": "Suspense com fallback"
+        },
+        "errorFallback": {
+          "regex": "fallbackRender|FallbackComponent|onError",
+          "description": "Componente de fallback de erro"
+        }
+      }
+    },
+    {
+      "id": "network-errors",
+      "name": "Erros de Rede",
+      "description": "Tratamento especifico de erros de rede",
+      "severity": "medium",
+      "patterns": {
+        "retryLogic": {
+          "description": "Logica de retry para falhas de rede"
+        },
+        "offlineHandling": {
+          "description": "Tratamento de estado offline"
+        }
+      },
+      "recommendations": [
+        "Implemente retry com backoff exponencial",
+        "Mostre estado de conexao ao usuario",
+        "Use React Query/SWR para retry automatico"
+      ]
+    }
+  ],
+
+  "errorBoundaryPatterns": {
+    "basic": {
+      "description": "Error Boundary basico com fallback",
+      "example": "// app/error.tsx\n'use client'\n\nexport default function Error({\n  error,\n  reset,\n}: {\n  error: Error & { digest?: string }\n  reset: () => void\n}) {\n  return (\n    <div>\n      <h2>Algo deu errado!</h2>\n      <button onClick={() => reset()}>Tentar novamente</button>\n    </div>\n  )\n}"
+    },
+    "withLogging": {
+      "description": "Error Boundary com logging",
+      "features": [
+        "Envia erro para servico de monitoramento",
+        "Mostra ID de referencia ao usuario",
+        "Opcao de reportar problema"
+      ]
+    }
+  },
+
+  "recommendations": {
+    "architecture": [
+      "Use Error Boundaries em nivel de rota e feature",
+      "Centralize tratamento de erros de API",
+      "Implemente retry pattern para operacoes criticas"
+    ],
+    "userExperience": [
+      "Nunca mostre erros tecnicos ao usuario",
+      "Sempre ofereça caminho de recuperacao",
+      "Mantenha estado quando possivel apos erro"
+    ],
+    "monitoring": [
+      "Use Sentry ou similar em producao",
+      "Configure alertas para erros criticos",
+      "Agrupe erros similares"
+    ]
+  }
+}

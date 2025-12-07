@@ -1,0 +1,148 @@
+{
+  "provider": "nextauth",
+  "name": "NextAuth.js v5 (Auth.js)",
+  "version": "5.0.0-beta",
+
+  "installation": {
+    "command": "pnpm add next-auth@beta @auth/prisma-adapter",
+    "devDependencies": []
+  },
+
+  "envVariables": {
+    "required": [
+      {
+        "key": "AUTH_SECRET",
+        "description": "Secret para criptografia (gere com: openssl rand -base64 32)",
+        "example": "your-secret-here",
+        "generate": "openssl rand -base64 32"
+      },
+      {
+        "key": "AUTH_URL",
+        "description": "URL base da aplicação",
+        "example": "http://localhost:3000",
+        "production": "https://yourdomain.com"
+      }
+    ],
+    "providers": {
+      "google": [
+        {
+          "key": "AUTH_GOOGLE_ID",
+          "description": "Client ID do Google OAuth"
+        },
+        {
+          "key": "AUTH_GOOGLE_SECRET",
+          "description": "Client Secret do Google OAuth"
+        }
+      ],
+      "github": [
+        {
+          "key": "AUTH_GITHUB_ID",
+          "description": "Client ID do GitHub OAuth"
+        },
+        {
+          "key": "AUTH_GITHUB_SECRET",
+          "description": "Client Secret do GitHub OAuth"
+        }
+      ],
+      "credentials": [
+        {
+          "key": "DATABASE_URL",
+          "description": "Connection string do Prisma (para armazenar usuários)"
+        }
+      ]
+    }
+  },
+
+  "files": {
+    "auth": {
+      "path": "auth.ts",
+      "description": "Configuração central do NextAuth",
+      "template": "nextauth-config"
+    },
+    "middleware": {
+      "path": "middleware.ts",
+      "template": "nextauth-middleware"
+    },
+    "route": {
+      "path": "app/api/auth/[...nextauth]/route.ts",
+      "template": "nextauth-route"
+    },
+    "prisma": {
+      "path": "prisma/schema.prisma",
+      "description": "Schema do banco (se usar database sessions)",
+      "template": "nextauth-prisma-schema"
+    }
+  },
+
+  "templates": {
+    "auth-config": "import NextAuth from 'next-auth'\nimport Google from 'next-auth/providers/google'\nimport GitHub from 'next-auth/providers/github'\nimport Credentials from 'next-auth/providers/credentials'\nimport { PrismaAdapter } from '@auth/prisma-adapter'\nimport { prisma } from '@/lib/prisma'\nimport bcrypt from 'bcryptjs'\n\nexport const { handlers, auth, signIn, signOut } = NextAuth({\n  adapter: PrismaAdapter(prisma),\n  session: {\n    strategy: 'jwt', // ou 'database'\n  },\n  providers: [\n    Google({\n      clientId: process.env.AUTH_GOOGLE_ID,\n      clientSecret: process.env.AUTH_GOOGLE_SECRET,\n    }),\n    GitHub({\n      clientId: process.env.AUTH_GITHUB_ID,\n      clientSecret: process.env.AUTH_GITHUB_SECRET,\n    }),\n    Credentials({\n      credentials: {\n        email: { label: 'Email', type: 'email' },\n        password: { label: 'Password', type: 'password' },\n      },\n      authorize: async (credentials) => {\n        const user = await prisma.user.findUnique({\n          where: { email: credentials.email as string },\n        })\n        \n        if (!user || !user.password) {\n          return null\n        }\n        \n        const isValid = await bcrypt.compare(\n          credentials.password as string,\n          user.password\n        )\n        \n        if (!isValid) {\n          return null\n        }\n        \n        return {\n          id: user.id,\n          email: user.email,\n          name: user.name,\n        }\n      },\n    }),\n  ],\n  callbacks: {\n    async jwt({ token, user, account }) {\n      if (user) {\n        token.id = user.id\n        token.role = user.role // se tiver campo role\n      }\n      return token\n    },\n    async session({ session, token }) {\n      if (session.user) {\n        session.user.id = token.id as string\n        session.user.role = token.role as string\n      }\n      return session\n    },\n  },\n  pages: {\n    signIn: '/login',\n    error: '/error',\n  },\n})",
+
+    "middleware": "export { auth as middleware } from '@/auth'\n\n// Ou com custom logic:\n// import { auth } from '@/auth'\n// \n// export default auth((req) => {\n//   const isLoggedIn = !!req.auth\n//   const isPublicRoute = ['/login', '/register'].includes(req.nextUrl.pathname)\n//   \n//   if (!isLoggedIn && !isPublicRoute) {\n//     return Response.redirect(new URL('/login', req.url))\n//   }\n// })\n\nexport const config = {\n  matcher: [\n    '/((?!_next|[^?]*\\\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',\n    '/(api|trpc)(.*)',\n  ],\n}",
+
+    "route-handler": "import { handlers } from '@/auth'\n\nexport const { GET, POST } = handlers",
+
+    "server-component": "import { auth } from '@/auth'\n\nexport default async function ServerComponent() {\n  const session = await auth()\n  \n  if (!session?.user) {\n    return <div>Not authenticated</div>\n  }\n  \n  return (\n    <div>\n      <h1>Welcome {session.user.name}</h1>\n      <p>Email: {session.user.email}</p>\n    </div>\n  )\n}",
+
+    "client-component": "'use client'\n\nimport { useSession, signIn, signOut } from 'next-auth/react'\n\nexport default function ClientComponent() {\n  const { data: session, status } = useSession()\n  \n  if (status === 'loading') {\n    return <div>Loading...</div>\n  }\n  \n  if (status === 'unauthenticated') {\n    return <button onClick={() => signIn()}>Sign In</button>\n  }\n  \n  return (\n    <div>\n      <h1>Welcome {session?.user?.name}</h1>\n      <button onClick={() => signOut()}>Sign Out</button>\n    </div>\n  )\n}",
+
+    "api-route": "import { auth } from '@/auth'\nimport { NextResponse } from 'next/server'\n\nexport async function GET() {\n  const session = await auth()\n  \n  if (!session) {\n    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })\n  }\n  \n  return NextResponse.json({ user: session.user })\n}",
+
+    "prisma-schema": "// NextAuth.js v5 Prisma Schema\n\nmodel User {\n  id            String    @id @default(cuid())\n  name          String?\n  email         String    @unique\n  emailVerified DateTime?\n  image         String?\n  password      String?   // Para Credentials provider\n  role          String    @default(\"user\") // Para RBAC\n  accounts      Account[]\n  sessions      Session[]\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n}\n\nmodel Account {\n  id                String  @id @default(cuid())\n  userId            String\n  type              String\n  provider          String\n  providerAccountId String\n  refresh_token     String? @db.Text\n  access_token      String? @db.Text\n  expires_at        Int?\n  token_type        String?\n  scope             String?\n  id_token          String? @db.Text\n  session_state     String?\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([provider, providerAccountId])\n}\n\nmodel Session {\n  id           String   @id @default(cuid())\n  sessionToken String   @unique\n  userId       String\n  expires      DateTime\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel VerificationToken {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n}"
+  },
+
+  "sessionStrategies": {
+    "jwt": {
+      "description": "Sessão via JWT (sem banco de dados)",
+      "pros": ["Mais rápido", "Stateless", "Edge-compatible"],
+      "cons": ["Não pode revogar tokens facilmente", "Token expira em tempo fixo"],
+      "bestFor": "Aplicações simples, edge deployment"
+    },
+    "database": {
+      "description": "Sessão armazenada no banco",
+      "pros": ["Revogação imediata", "Mais seguro", "Controle total"],
+      "cons": ["Requer database query", "Não funciona no Edge"],
+      "bestFor": "Aplicações enterprise, multi-device"
+    }
+  },
+
+  "providers": {
+    "oauth": {
+      "description": "Provedores OAuth (Google, GitHub, etc.)",
+      "setup": [
+        "Criar OAuth app no provider",
+        "Adicionar redirect URL: {APP_URL}/api/auth/callback/{provider}",
+        "Configurar env vars (ID e SECRET)",
+        "Adicionar provider no auth.ts"
+      ]
+    },
+    "credentials": {
+      "description": "Email/Password customizado",
+      "security": [
+        "Hash passwords com bcrypt (rounds >= 10)",
+        "Valide email format",
+        "Implemente rate limiting",
+        "Use Zod para validação"
+      ]
+    },
+    "email": {
+      "description": "Magic links via email",
+      "requires": "Email service (Resend, SendGrid)",
+      "setup": [
+        "Configure email provider",
+        "Adicione Email provider no auth.ts",
+        "Customize email template"
+      ]
+    }
+  },
+
+  "bestPractices": [
+    "Use JWT para edge, database para controle fino",
+    "Sempre valide session no servidor",
+    "Implemente CSRF protection (built-in)",
+    "Rotacione refresh tokens",
+    "Use callbacks para adicionar dados custom",
+    "Configure páginas de erro customizadas",
+    "Log eventos de autenticação",
+    "Teste fluxos de OAuth em staging"
+  ]
+}

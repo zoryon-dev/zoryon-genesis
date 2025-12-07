@@ -1,0 +1,180 @@
+{
+  "id": "performance",
+  "name": "Performance Best Practices",
+  "description": "Verifica otimizacoes de performance React",
+
+  "checks": [
+    {
+      "id": "unnecessary-memo",
+      "name": "Memoizacao Desnecessaria",
+      "description": "Uso de memo/useMemo/useCallback sem necessidade",
+      "severity": "info",
+      "context": "React 19+ com Compiler reduz necessidade de memoizacao manual",
+      "patterns": {
+        "memoSimpleComponent": {
+          "regex": "memo\\(\\s*function\\s+\\w+\\s*\\(\\s*\\)\\s*{",
+          "message": "memo() em componente sem props pode ser desnecessario"
+        },
+        "useMemoSimple": {
+          "regex": "useMemo\\(\\s*\\(\\)\\s*=>\\s*[^,{]+,",
+          "message": "useMemo para operacao simples pode ser overhead"
+        },
+        "useCallbackNoMemo": {
+          "regex": "useCallback\\([^,]+,\\s*\\[\\s*\\]\\)",
+          "message": "useCallback sem dependencias - funcao nunca muda"
+        }
+      },
+      "recommendation": "Profile antes de otimizar. React Compiler otimiza automaticamente"
+    },
+    {
+      "id": "missing-memoization",
+      "name": "Memoizacao Ausente",
+      "description": "Casos onde memoizacao pode ser necessaria",
+      "severity": "medium",
+      "patterns": {
+        "expensiveCalculation": {
+          "keywords": ["filter", "map", "reduce", "sort", "find"],
+          "threshold": 3,
+          "message": "Operacoes em cadeia podem precisar de useMemo"
+        },
+        "newObjectInProps": {
+          "regex": "<\\w+[^>]*=\\{\\s*\\{[^}]+\\}\\s*\\}",
+          "message": "Objetos inline em props criam nova referencia a cada render"
+        },
+        "newArrayInProps": {
+          "regex": "<\\w+[^>]*=\\{\\s*\\[[^\\]]+\\]\\s*\\}",
+          "message": "Arrays inline em props criam nova referencia a cada render"
+        }
+      }
+    },
+    {
+      "id": "large-bundle",
+      "name": "Bundle Grande",
+      "description": "Imports que podem aumentar bundle size",
+      "severity": "medium",
+      "patterns": {
+        "lodashFull": {
+          "regex": "import\\s+_\\s+from\\s+['\"]lodash['\"]",
+          "message": "Import completo do lodash. Use import especifico ou lodash-es"
+        },
+        "momentjs": {
+          "regex": "import\\s+moment\\s+from\\s+['\"]moment['\"]",
+          "message": "Moment.js e grande. Considere date-fns ou dayjs"
+        },
+        "iconsFull": {
+          "regex": "import\\s+\\*\\s+as\\s+Icons",
+          "message": "Import completo de icons. Importe apenas os necessarios"
+        }
+      },
+      "fix": "Use tree-shaking friendly imports"
+    },
+    {
+      "id": "image-optimization",
+      "name": "Otimizacao de Imagens",
+      "description": "Verifica uso correto de imagens",
+      "severity": "medium",
+      "patterns": {
+        "htmlImg": {
+          "regex": "<img\\s+[^>]*src=",
+          "message": "Use next/image para otimizacao automatica"
+        },
+        "missingAlt": {
+          "regex": "<(?:img|Image)[^>]*(?!alt=)[^>]*>",
+          "message": "Imagem sem alt text"
+        },
+        "missingDimensions": {
+          "regex": "<Image[^>]*(?!width=|height=|fill)[^>]*>",
+          "message": "next/image precisa de width/height ou fill"
+        }
+      }
+    },
+    {
+      "id": "lazy-loading",
+      "name": "Lazy Loading",
+      "description": "Verifica uso de code splitting",
+      "severity": "info",
+      "checks": {
+        "dynamicImport": {
+          "recommended": "next/dynamic para componentes pesados",
+          "patterns": ["React.lazy", "dynamic\\("]
+        },
+        "routeSplitting": {
+          "recommended": "App Router faz code splitting automatico por rota"
+        }
+      }
+    },
+    {
+      "id": "render-optimization",
+      "name": "Otimizacao de Render",
+      "description": "Padroes que podem causar re-renders excessivos",
+      "severity": "medium",
+      "patterns": {
+        "stateInParent": {
+          "description": "Estado que afeta apenas um filho deveria estar no filho"
+        },
+        "contextOveruse": {
+          "description": "Context com valor que muda frequentemente causa re-render em todos consumers"
+        },
+        "forceUpdate": {
+          "regex": "forceUpdate\\(",
+          "message": "Evite forceUpdate - indica problema de arquitetura"
+        }
+      }
+    },
+    {
+      "id": "list-virtualization",
+      "name": "Virtualizacao de Listas",
+      "description": "Listas grandes sem virtualizacao",
+      "severity": "low",
+      "threshold": 100,
+      "recommendation": "Para listas com 100+ itens, considere react-window ou TanStack Virtual"
+    },
+    {
+      "id": "data-fetching",
+      "name": "Data Fetching",
+      "description": "Verifica padroes de data fetching",
+      "severity": "medium",
+      "patterns": {
+        "fetchInEffect": {
+          "regex": "useEffect\\([^}]*fetch\\(",
+          "message": "Considere React Query, SWR ou Server Components para data fetching"
+        },
+        "waterfallFetch": {
+          "description": "Requests em sequencia ao inves de paralelo"
+        }
+      },
+      "recommendations": [
+        "Use Server Components para data fetching quando possivel",
+        "React Query ou SWR para cache e revalidacao",
+        "Promise.all para requests paralelos"
+      ]
+    }
+  ],
+
+  "tools": {
+    "profiling": {
+      "reactDevTools": "React DevTools Profiler para identificar re-renders",
+      "lighthouseCI": "Lighthouse CI para metricas de performance",
+      "bundleAnalyzer": "@next/bundle-analyzer para analise de bundle"
+    },
+    "monitoring": {
+      "webVitals": "Core Web Vitals (LCP, FID, CLS)",
+      "sentry": "Performance monitoring em producao"
+    }
+  },
+
+  "recommendations": {
+    "general": [
+      "Profile antes de otimizar",
+      "React 19+ Compiler otimiza automaticamente",
+      "Server Components reduzem JS no cliente",
+      "Use Suspense para carregamento progressivo"
+    ],
+    "nextjs": [
+      "Use next/image para imagens",
+      "Use next/font para fontes",
+      "Habilite Turbopack para dev mais rapido",
+      "Use ISR ou static generation quando possivel"
+    ]
+  }
+}

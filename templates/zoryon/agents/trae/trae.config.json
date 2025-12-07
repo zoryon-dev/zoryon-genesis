@@ -1,0 +1,107 @@
+{
+  "$schema": "https://trae.ai/schema/config.json",
+  "project": {
+    "name": "Zoryon Genesis",
+    "description": "Template Next.js completo e configurável",
+    "language": "pt-BR"
+  },
+  "tech": {
+    "framework": "Next.js 16",
+    "ui": "React 19",
+    "language": "TypeScript 5",
+    "styling": "Tailwind CSS 4",
+    "packageManager": "pnpm"
+  },
+  "paths": {
+    "src": "src",
+    "components": "src/components",
+    "pages": "src/app",
+    "lib": "src/lib",
+    "hooks": "src/hooks",
+    "types": "src/types",
+    "flow": ".zoryon/flow",
+    "docs": ".zoryon/docs",
+    "tutorials": ".zoryon/tutoriais",
+    "tasks": ".zoryon/tasks"
+  },
+  "conventions": {
+    "responseLanguage": "português brasileiro",
+    "codeComments": "português",
+    "commitMessages": "português",
+    "naming": {
+      "components": "PascalCase",
+      "hooks": "useCamelCase",
+      "utilities": "camelCase",
+      "types": "PascalCase",
+      "constants": "UPPER_SNAKE_CASE"
+    }
+  },
+  "scripts": {
+    "development": {
+      "start": "pnpm dev",
+      "build": "pnpm build",
+      "lint": "pnpm lint",
+      "typecheck": "pnpm typecheck"
+    },
+    "tasks": {
+      "list": "pnpm task list",
+      "next": "pnpm task next",
+      "done": "pnpm task done",
+      "status": "pnpm task status",
+      "add": "pnpm task add"
+    },
+    "security": {
+      "scan": "pnpm security:scan"
+    },
+    "database": {
+      "push": "pnpm db:push",
+      "generate": "pnpm db:generate",
+      "studio": "pnpm db:studio"
+    }
+  },
+  "workflow": {
+    "onStart": [
+      "PRIMEIRO: Ler .zoryon/flow/PARA-IA-LER.md para entender o contexto completo",
+      "Verificar se existe .zoryon/flow/BRIEFING.md com a ideia do usuário",
+      "Se tiver briefing: oferecer opções (PRD, stories, tarefas, código)",
+      "Se não tiver: perguntar o que o usuário quer construir"
+    ],
+    "beforeCommit": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm security:scan"
+    ],
+    "commitFormat": "tipo: descrição",
+    "commitTypes": [
+      "feat",
+      "fix",
+      "docs",
+      "style",
+      "refactor",
+      "test",
+      "chore"
+    ]
+  },
+  "documentation": {
+    "primary": ".zoryon/flow/PARA-IA-LER.md",
+    "briefing": ".zoryon/flow/BRIEFING.md",
+    "prd": ".zoryon/flow/PRD.md",
+    "stories": ".zoryon/flow/STORIES.md",
+    "start": ".zoryon/docs/COMECE-AQUI.md",
+    "errors": ".zoryon/docs/ERROS-COMUNS.md",
+    "commands": ".zoryon/docs/COMANDOS-ESSENCIAIS.md",
+    "overview": ".zoryon/docs/O-QUE-ESTA-DISPONIVEL.md"
+  },
+  "rules": [
+    "PRIMEIRO: Ler .zoryon/flow/PARA-IA-LER.md para entender o contexto",
+    "Verificar se existe .zoryon/flow/BRIEFING.md com a ideia do usuário",
+    "Sempre responder em português brasileiro",
+    "Usar TypeScript com tipos explícitos",
+    "Preferir Server Components quando possível",
+    "Usar Tailwind CSS para estilos",
+    "Seguir padrões de código existentes",
+    "Documentar funções complexas",
+    "Nunca expor secrets no código",
+    "Usar Zoryon Tasks para organizar trabalho"
+  ]
+}

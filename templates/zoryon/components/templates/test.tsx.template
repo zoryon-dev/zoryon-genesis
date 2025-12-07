@@ -1,0 +1,180 @@
+// {{componentName}}.test.tsx
+// Gerado por Zory-Component
+
+import { render, screen, fireEvent } from "@testing-library/react"
+import { describe, it, expect, vi } from "vitest"
+import { {{componentName}} } from "./{{fileName}}"
+
+describe("{{componentName}}", () => {
+  // ==========================================================================
+  // RENDERIZAÇÃO
+  // ==========================================================================
+
+  it("deve renderizar corretamente", () => {
+    render(<{{componentName}}>Test Content</{{componentName}}>)
+    expect(screen.getByText("Test Content")).toBeInTheDocument()
+  })
+
+  it("deve aceitar className customizada", () => {
+    render(<{{componentName}} className="custom-class">Content</{{componentName}}>)
+    const element = screen.getByText("Content")
+    expect(element).toHaveClass("custom-class")
+  })
+
+  // ==========================================================================
+  // VARIANTES
+  // ==========================================================================
+
+  {{#if hasVariants}}
+  describe("Variantes", () => {
+    it("deve aplicar variante default por padrão", () => {
+      render(<{{componentName}}>Default</{{componentName}}>)
+      const element = screen.getByText("Default")
+      // Verificar classes da variante default
+      expect(element).toBeInTheDocument()
+    })
+
+    it("deve aplicar variante primary", () => {
+      render(<{{componentName}} variant="primary">Primary</{{componentName}}>)
+      const element = screen.getByText("Primary")
+      expect(element).toHaveClass("bg-primary")
+    })
+
+    it("deve aplicar variante secondary", () => {
+      render(<{{componentName}} variant="secondary">Secondary</{{componentName}}>)
+      const element = screen.getByText("Secondary")
+      expect(element).toHaveClass("bg-secondary")
+    })
+
+    it("deve aplicar variante destructive", () => {
+      render(<{{componentName}} variant="destructive">Destructive</{{componentName}}>)
+      const element = screen.getByText("Destructive")
+      expect(element).toHaveClass("bg-destructive")
+    })
+  })
+  {{/if}}
+
+  // ==========================================================================
+  // TAMANHOS
+  // ==========================================================================
+
+  {{#if hasSizes}}
+  describe("Tamanhos", () => {
+    it("deve aplicar tamanho sm", () => {
+      render(<{{componentName}} size="sm">Small</{{componentName}}>)
+      const element = screen.getByText("Small")
+      expect(element).toHaveClass("h-8")
+    })
+
+    it("deve aplicar tamanho md por padrão", () => {
+      render(<{{componentName}}>Medium</{{componentName}}>)
+      const element = screen.getByText("Medium")
+      expect(element).toHaveClass("h-10")
+    })
+
+    it("deve aplicar tamanho lg", () => {
+      render(<{{componentName}} size="lg">Large</{{componentName}}>)
+      const element = screen.getByText("Large")
+      expect(element).toHaveClass("h-12")
+    })
+  })
+  {{/if}}
+
+  // ==========================================================================
+  // ESTADOS
+  // ==========================================================================
+
+  {{#if hasDisabled}}
+  describe("Estado disabled", () => {
+    it("deve estar desabilitado quando disabled=true", () => {
+      render(<{{componentName}} disabled>Disabled</{{componentName}}>)
+      const element = screen.getByText("Disabled")
+      expect(element).toBeDisabled()
+    })
+
+    it("deve estar habilitado quando disabled=false", () => {
+      render(<{{componentName}} disabled={false}>Enabled</{{componentName}}>)
+      const element = screen.getByText("Enabled")
+      expect(element).not.toBeDisabled()
+    })
+  })
+  {{/if}}
+
+  {{#if hasLoading}}
+  describe("Estado loading", () => {
+    it("deve mostrar indicador de loading", () => {
+      render(<{{componentName}} isLoading>Loading</{{componentName}}>)
+      // Verificar se há indicador de loading
+      expect(screen.getByText("Loading")).toBeInTheDocument()
+    })
+
+    it("deve desabilitar quando loading", () => {
+      render(<{{componentName}} isLoading>Loading</{{componentName}}>)
+      const element = screen.getByText("Loading")
+      expect(element).toBeDisabled()
+    })
+  })
+  {{/if}}
+
+  // ==========================================================================
+  // EVENTOS
+  // ==========================================================================
+
+  {{#if hasClick}}
+  describe("Eventos", () => {
+    it("deve chamar onClick quando clicado", () => {
+      const handleClick = vi.fn()
+      render(<{{componentName}} onClick={handleClick}>Clickable</{{componentName}}>)
+
+      fireEvent.click(screen.getByText("Clickable"))
+      expect(handleClick).toHaveBeenCalledTimes(1)
+    })
+
+    it("não deve chamar onClick quando desabilitado", () => {
+      const handleClick = vi.fn()
+      render(<{{componentName}} onClick={handleClick} disabled>Disabled</{{componentName}}>)
+
+      fireEvent.click(screen.getByText("Disabled"))
+      expect(handleClick).not.toHaveBeenCalled()
+    })
+  })
+  {{/if}}
+
+  // ==========================================================================
+  // ACESSIBILIDADE
+  // ==========================================================================
+
+  describe("Acessibilidade", () => {
+    it("deve ter role correto", () => {
+      render(<{{componentName}}>Accessible</{{componentName}}>)
+      // Adicionar verificações de a11y específicas
+      expect(screen.getByText("Accessible")).toBeInTheDocument()
+    })
+
+    {{#if hasAriaLabel}}
+    it("deve aceitar aria-label", () => {
+      render(<{{componentName}} aria-label="Custom label">Content</{{componentName}}>)
+      expect(screen.getByLabelText("Custom label")).toBeInTheDocument()
+    })
+    {{/if}}
+  })
+
+  // ==========================================================================
+  // REFS
+  // ==========================================================================
+
+  it("deve encaminhar ref corretamente", () => {
+    const ref = vi.fn()
+    render(<{{componentName}} ref={ref}>With Ref</{{componentName}}>)
+    expect(ref).toHaveBeenCalled()
+  })
+
+  // ==========================================================================
+  // SNAPSHOT
+  // ==========================================================================
+
+  it("deve corresponder ao snapshot", () => {
+    const { container } = render(<{{componentName}}>Snapshot</{{componentName}}>)
+    expect(container).toMatchSnapshot()
+  })
+})

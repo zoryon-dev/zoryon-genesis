@@ -1,0 +1,74 @@
+{
+  "id": "dependencies",
+  "name": "Dependency Security Checks",
+  "description": "Verifica vulnerabilidades em dependencias do projeto",
+
+  "checks": [
+    {
+      "id": "npm-audit",
+      "name": "NPM Audit",
+      "description": "Executa npm audit para encontrar vulnerabilidades",
+      "command": "npm audit --json",
+      "severity": "varies",
+      "automated": true
+    },
+    {
+      "id": "outdated-deps",
+      "name": "Outdated Dependencies",
+      "description": "Verifica dependencias desatualizadas",
+      "command": "npm outdated --json",
+      "severity": "medium",
+      "automated": true
+    },
+    {
+      "id": "lockfile-exists",
+      "name": "Lockfile Exists",
+      "description": "Verifica se package-lock.json ou pnpm-lock.yaml existe",
+      "check": "file-exists",
+      "files": ["package-lock.json", "pnpm-lock.yaml", "yarn.lock"],
+      "severity": "high",
+      "fix": "Execute npm install ou pnpm install para gerar lockfile"
+    },
+    {
+      "id": "dev-deps-in-prod",
+      "name": "Dev Dependencies in Production",
+      "description": "Verifica se devDependencies nao estao em dependencies",
+      "severity": "low",
+      "automated": true
+    }
+  ],
+
+  "knownVulnerablePackages": [
+    {
+      "name": "lodash",
+      "versions": ["<4.17.21"],
+      "cve": "CVE-2021-23337",
+      "description": "Prototype Pollution"
+    },
+    {
+      "name": "axios",
+      "versions": ["<0.21.1"],
+      "cve": "CVE-2020-28168",
+      "description": "SSRF via proxy"
+    },
+    {
+      "name": "minimist",
+      "versions": ["<1.2.6"],
+      "cve": "CVE-2021-44906",
+      "description": "Prototype Pollution"
+    },
+    {
+      "name": "node-fetch",
+      "versions": ["<2.6.7"],
+      "cve": "CVE-2022-0235",
+      "description": "Exposure of Sensitive Information"
+    }
+  ],
+
+  "recommendations": {
+    "useLockfile": "Sempre use um lockfile para garantir builds reprodutiveis",
+    "regularAudits": "Execute npm audit regularmente (idealmente no CI/CD)",
+    "autoUpdate": "Configure Dependabot ou Renovate para updates automaticos",
+    "minReleaseAge": "Configure minimumReleaseAge no pnpm (>=1440 minutos recomendado)"
+  }
+}

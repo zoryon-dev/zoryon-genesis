@@ -1,0 +1,75 @@
+{
+  "$schema": "https://kiro.dev/schema/config.json",
+  "name": "Zoryon Genesis",
+  "description": "Template Next.js completo e configurável",
+  "version": "1.0.0",
+  "language": "pt-BR",
+  "framework": {
+    "name": "Next.js",
+    "version": "16"
+  },
+  "stack": [
+    "React 19",
+    "TypeScript 5",
+    "Tailwind CSS 4",
+    "pnpm"
+  ],
+  "onStart": {
+    "priority": "high",
+    "instructions": "LEIA PRIMEIRO: .zoryon/flow/PARA-IA-LER.md - Este arquivo contém o contexto completo do projeto e suas instruções detalhadas."
+  },
+  "conventions": {
+    "language": "português brasileiro",
+    "comments": "português",
+    "commits": "português",
+    "componentNaming": "PascalCase",
+    "hookNaming": "camelCase com prefixo use",
+    "utilityNaming": "camelCase"
+  },
+  "structure": {
+    "components": "src/components",
+    "pages": "src/app",
+    "lib": "src/lib",
+    "hooks": "src/hooks",
+    "types": "src/types"
+  },
+  "commands": {
+    "dev": "pnpm dev",
+    "build": "pnpm build",
+    "lint": "pnpm lint",
+    "typecheck": "pnpm typecheck",
+    "tasks": "pnpm task",
+    "security": "pnpm security:scan"
+  },
+  "tasks": {
+    "file": ".zoryon/tasks/tasks.json",
+    "commands": {
+      "list": "pnpm task list",
+      "next": "pnpm task next",
+      "add": "pnpm task add",
+      "done": "pnpm task done",
+      "status": "pnpm task status"
+    }
+  },
+  "documentation": {
+    "primary": ".zoryon/flow/PARA-IA-LER.md",
+    "briefing": ".zoryon/flow/BRIEFING.md",
+    "prd": ".zoryon/flow/PRD.md",
+    "stories": ".zoryon/flow/STORIES.md",
+    "start": ".zoryon/docs/COMECE-AQUI.md",
+    "errors": ".zoryon/docs/ERROS-COMUNS.md",
+    "commands": ".zoryon/docs/COMANDOS-ESSENCIAIS.md",
+    "tutorials": ".zoryon/tutoriais/"
+  },
+  "rules": [
+    "PRIMEIRO: Ler .zoryon/flow/PARA-IA-LER.md para entender o contexto",
+    "Verificar se existe .zoryon/flow/BRIEFING.md com a ideia do usuário",
+    "Responder sempre em português brasileiro",
+    "Usar TypeScript estrito",
+    "Seguir padrões de código existentes",
+    "Comentar código complexo em português",
+    "Nunca commitar secrets ou dados sensíveis",
+    "Executar lint antes de commits",
+    "Usar Zoryon Tasks para gestão de tarefas"
+  ]
+}

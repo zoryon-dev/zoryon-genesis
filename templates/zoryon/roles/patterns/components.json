@@ -1,0 +1,11 @@
+{
+  "pattern": "components",
+  "name": "Permission Components",
+  "description": "Componentes React para controle de acesso",
+
+  "templates": {
+    "Can": "'use client'\nimport { usePermissions } from '@/hooks/usePermissions'\n\ninterface CanProps {\n  permission?: string\n  role?: string\n  fallback?: React.ReactNode\n  children: React.ReactNode\n}\n\nexport function Can({ permission, role, fallback, children }: CanProps) {\n  const { hasPermission, hasRole } = usePermissions()\n  \n  let allowed = false\n  \n  if (permission) {\n    allowed = hasPermission(permission)\n  } else if (role) {\n    allowed = hasRole(role)\n  }\n  \n  if (!allowed) {\n    return <>{fallback}</>\n  }\n  \n  return <>{children}</>\n}\n\n// Uso:\n// <Can permission=\"posts:create\">\n//   <CreatePostButton />\n// </Can>\n//\n// <Can role=\"ADMIN\" fallback={<div>Admin only</div>}>\n//   <AdminPanel />\n// </Can>",
+
+    "ProtectedRoute": "'use client'\nimport { useEffect } from 'react'\nimport { useRouter } from 'next/navigation'\nimport { usePermissions } from '@/hooks/usePermissions'\n\ninterface ProtectedRouteProps {\n  permission?: string\n  role?: string\n  redirectTo?: string\n  children: React.ReactNode\n}\n\nexport function ProtectedRoute({\n  permission,\n  role,\n  redirectTo = '/unauthorized',\n  children,\n}: ProtectedRouteProps) {\n  const { hasPermission, hasRole } = usePermissions()\n  const router = useRouter()\n  \n  useEffect(() => {\n    let allowed = false\n    \n    if (permission) {\n      allowed = hasPermission(permission)\n    } else if (role) {\n      allowed = hasRole(role)\n    }\n    \n    if (!allowed) {\n      router.push(redirectTo)\n    }\n  }, [hasPermission, hasRole, permission, role, redirectTo, router])\n  \n  return <>{children}</>\n}"
+  }
+}

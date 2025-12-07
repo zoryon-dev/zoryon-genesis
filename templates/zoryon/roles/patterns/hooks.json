@@ -1,0 +1,12 @@
+{
+  "pattern": "hooks",
+  "name": "Permission Hooks",
+  "description": "Hooks React para verificar permissões",
+
+  "templates": {
+    "usePermissions": "'use client'\nimport { useSession } from 'next-auth/react'\n\ntype Permission = `${string}:${string}`\n\nexport function usePermissions() {\n  const { data: session } = useSession()\n  \n  const hasPermission = (permission: Permission) => {\n    if (!session?.user) return false\n    \n    const role = session.user.role\n    \n    // Admin tem tudo\n    if (role === 'ADMIN') return true\n    \n    // Verifica permissão específica\n    const rolePermissions = ROLE_PERMISSIONS[role] || []\n    \n    return rolePermissions.some(p => {\n      if (p === '*:*') return true // wildcard\n      if (p === permission) return true // match exato\n      \n      const [resource, action] = p.split(':')\n      const [reqResource, reqAction] = permission.split(':')\n      \n      if (resource === reqResource && action === '*') return true\n      if (resource === '*' && action === reqAction) return true\n      \n      return false\n    })\n  }\n  \n  const hasRole = (role: string) => {\n    return session?.user?.role === role\n  }\n  \n  return { hasPermission, hasRole, role: session?.user?.role }\n}\n\nconst ROLE_PERMISSIONS = {\n  ADMIN: ['*:*'],\n  EDITOR: ['posts:*', 'comments:moderate'],\n  VIEWER: ['posts:read', 'comments:read'],\n  USER: ['posts:read', 'comments:create'],\n}",
+
+    "useRequirePermission": "'use client'\nimport { useEffect } from 'react'\nimport { useRouter } from 'next/navigation'\nimport { usePermissions } from './usePermissions'\n\nexport function useRequirePermission(permission: string) {\n  const { hasPermission } = usePermissions()\n  const router = useRouter()\n  \n  useEffect(() => {
+    if (!hasPermission(permission)) {\n      router.push('/unauthorized')\n    }\n  }, [hasPermission, permission, router])\n  \n  return hasPermission(permission)\n}"
+  }
+}

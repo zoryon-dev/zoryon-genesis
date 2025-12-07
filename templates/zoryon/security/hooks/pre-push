@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🧪 Verificando testes antes do push...\n"
+
+# Verificar se há testes configurados
+if grep -q '"test"' package.json; then
+  echo "Executando testes..."
+  pnpm test || {
+    echo "\n❌ Testes falharam. Corrija antes de fazer push."
+    exit 1
+  }
+  echo "\n✅ Todos os testes passaram!\n"
+else
+  echo "ℹ️  Nenhum teste configurado. Pulando verificação.\n"
+fi

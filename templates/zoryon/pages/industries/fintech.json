@@ -1,0 +1,96 @@
+{
+  "id": "fintech",
+  "name": "Fintech / Finanças",
+  "description": "Financial technology landing pages that balance innovation with trust",
+
+  "audience": {
+    "primary": ["Investors", "Consumers", "Small businesses", "Finance professionals"],
+    "painPoints": ["High fees", "Complex processes", "Lack of transparency", "Security concerns"],
+    "desires": ["Security", "Simplicity", "Better returns", "Control over money"]
+  },
+
+  "copyGuidelines": {
+    "tone": "Trustworthy, modern, authoritative but accessible",
+    "headlines": "Emphasize security AND innovation, specific benefits",
+    "cta": "Get Started, Open Account, Download App, See How It Works",
+    "proofTypes": ["Security badges", "Regulatory compliance", "User stats", "Media mentions"]
+  },
+
+  "recommendedSections": [
+    {
+      "id": "hero",
+      "required": true,
+      "elements": ["headline", "value-prop", "cta", "app-mockup", "trust-indicators"],
+      "note": "Show app interface immediately"
+    },
+    {
+      "id": "trust-bar",
+      "required": true,
+      "elements": ["security-badges", "compliance-logos", "encryption-note"],
+      "note": "FDIC, SSL, PCI-DSS badges if applicable"
+    },
+    {
+      "id": "features",
+      "required": true,
+      "elements": ["benefit-cards", "icons", "numbers"],
+      "layout": "Focus on 3-4 key differentiators"
+    },
+    {
+      "id": "how-it-works",
+      "required": true,
+      "elements": ["step-by-step", "app-screenshots"],
+      "note": "Show simplicity of process"
+    },
+    {
+      "id": "stats",
+      "required": false,
+      "elements": ["big-numbers", "context"],
+      "note": "$X processed, Y users, Z% savings"
+    },
+    {
+      "id": "testimonials",
+      "required": true,
+      "elements": ["quote", "results", "verification"],
+      "note": "Include specific financial outcomes"
+    },
+    {
+      "id": "security",
+      "required": true,
+      "elements": ["encryption", "compliance", "protection"],
+      "note": "Dedicated security section builds trust"
+    },
+    {
+      "id": "app-download",
+      "required": false,
+      "elements": ["app-store-badges", "qr-code", "phone-mockup"]
+    },
+    {
+      "id": "faq",
+      "required": true,
+      "elements": ["accordion", "support-link"],
+      "note": "Address security, fees, and process questions"
+    }
+  ],
+
+  "conversionTips": [
+    "Lead with security - it's the #1 concern for fintech users",
+    "Show specific numbers: APY, savings, fees comparison",
+    "Include regulatory compliance badges (FDIC, SEC, etc.)",
+    "Use professional, trustworthy colors (blue, dark mode)",
+    "Make fee structure transparent and prominent"
+  ],
+
+  "visualStyle": {
+    "recommended": ["gradient", "glassmorphism"],
+    "colors": "Deep blues, teals, dark mode with accents",
+    "imagery": "App mockups, charts/graphs, professional photos"
+  },
+
+  "promptEnhancements": [
+    "Use a dark mode design to convey sophistication",
+    "Include security badges prominently near the fold",
+    "Show a phone mockup with the app interface",
+    "Add animated charts or number counters for stats",
+    "Include a comparison table showing fee advantages"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "Whitelist de Segurança",
+  "version": "1.0.0",
+  "description": "Configurações para ignorar falsos positivos no scanner de segurança",
+
+  "ignorarArquivos": [
+    "**/*.md",
+    "**/*.txt",
+    ".zoryon/tutoriais/**",
+    ".zoryon/docs/**",
+    ".zoryon/mcp/*.json",
+    ".env.example",
+    "*.example"
+  ],
+
+  "ignorarDiretorios": [
+    "node_modules",
+    ".git",
+    ".next",
+    "dist",
+    "build",
+    ".turbo",
+    "coverage",
+    ".vercel",
+    ".cache"
+  ],
+
+  "ignorarRegras": {
+    ".zoryon/security/rules/*.json": ["*"],
+    "README.md": ["*"],
+    "CHANGELOG.md": ["*"]
+  },
+
+  "ignorarPadroes": [
+    {
+      "comentario": "Exemplos de código em documentação",
+      "pattern": "sk_test_exemplo",
+      "motivo": "Exemplo ilustrativo, não é secret real"
+    },
+    {
+      "comentario": "Placeholder de variáveis de ambiente",
+      "pattern": "sua_chave_aqui",
+      "motivo": "Placeholder para o usuário substituir"
+    },
+    {
+      "comentario": "Placeholder genérico",
+      "pattern": "your_.*_here",
+      "motivo": "Placeholder para o usuário substituir"
+    }
+  ],
+
+  "comentarioIgnore": "zoryon-ignore",
+
+  "notas": [
+    "Arquivos em 'ignorarArquivos' são completamente pulados",
+    "Diretorios em 'ignorarDiretorios' são recursivamente ignorados",
+    "Use 'ignorarRegras' para ignorar regras específicas em arquivos específicos",
+    "Use '// zoryon-ignore' em uma linha para ignorar apenas aquela linha",
+    "Use '// zoryon-ignore-file' no início do arquivo para ignorar o arquivo inteiro",
+    "Use '// zoryon-ignore-next-line' para ignorar a próxima linha"
+  ]
+}

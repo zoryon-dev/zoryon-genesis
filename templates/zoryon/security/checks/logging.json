@@ -1,0 +1,137 @@
+{
+  "id": "logging",
+  "name": "Logging & Monitoring Checks",
+  "description": "Verifica implementacao de logs de seguranca",
+
+  "checks": [
+    {
+      "id": "logging-library",
+      "name": "Logging Library",
+      "description": "Verifica se biblioteca de logging esta configurada",
+      "libraries": ["pino", "winston", "bunyan", "log4js"],
+      "severity": "medium",
+      "fix": "Configure uma biblioteca de logging estruturado"
+    },
+    {
+      "id": "auth-logging",
+      "name": "Authentication Logging",
+      "description": "Verifica se eventos de auth sao logados",
+      "events": [
+        "login_success",
+        "login_failure",
+        "logout",
+        "password_reset",
+        "account_locked"
+      ],
+      "severity": "high"
+    },
+    {
+      "id": "sensitive-data-logging",
+      "name": "Sensitive Data in Logs",
+      "description": "Verifica se dados sensiveis nao sao logados",
+      "badPatterns": [
+        {
+          "pattern": "console\\.log\\(.*password",
+          "message": "Nunca logue senhas"
+        },
+        {
+          "pattern": "console\\.log\\(.*token",
+          "message": "Nunca logue tokens de autenticacao"
+        },
+        {
+          "pattern": "console\\.log\\(.*secret",
+          "message": "Nunca logue secrets"
+        },
+        {
+          "pattern": "console\\.log\\(.*apiKey",
+          "message": "Nunca logue API keys"
+        },
+        {
+          "pattern": "console\\.log\\(.*creditCard",
+          "message": "Nunca logue dados de cartao"
+        },
+        {
+          "pattern": "console\\.log\\(.*ssn",
+          "message": "Nunca logue dados pessoais sensiveis"
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "id": "error-logging",
+      "name": "Error Logging",
+      "description": "Verifica se erros sao logados adequadamente",
+      "patterns": [
+        "catch.*console\\.error",
+        "catch.*logger\\.",
+        "onError",
+        "errorHandler"
+      ],
+      "severity": "medium"
+    },
+    {
+      "id": "audit-trail",
+      "name": "Audit Trail",
+      "description": "Verifica se acoes importantes sao auditadas",
+      "events": [
+        "data_created",
+        "data_updated",
+        "data_deleted",
+        "permission_changed",
+        "settings_changed"
+      ],
+      "severity": "medium"
+    },
+    {
+      "id": "console-in-production",
+      "name": "Console Statements in Production",
+      "description": "Verifica console.log em codigo de producao",
+      "patterns": [
+        "console\\.log\\(",
+        "console\\.debug\\(",
+        "console\\.info\\("
+      ],
+      "severity": "low",
+      "fix": "Remova ou substitua por logger apropriado"
+    }
+  ],
+
+  "loggerConfig": {
+    "recommended": {
+      "library": "pino",
+      "example": "import pino from 'pino'\n\nconst logger = pino({\n  level: process.env.LOG_LEVEL || 'info',\n  transport: {\n    target: 'pino-pretty',\n    options: { colorize: true }\n  },\n  redact: ['password', 'token', 'secret', 'apiKey', 'authorization']\n})\n\nexport { logger }"
+    },
+    "redactFields": [
+      "password",
+      "token",
+      "secret",
+      "apiKey",
+      "authorization",
+      "cookie",
+      "creditCard",
+      "ssn",
+      "accessToken",
+      "refreshToken"
+    ]
+  },
+
+  "monitoring": {
+    "services": [
+      {
+        "name": "Sentry",
+        "description": "Error tracking e performance monitoring",
+        "package": "@sentry/nextjs"
+      },
+      {
+        "name": "LogRocket",
+        "description": "Session replay e logging",
+        "package": "logrocket"
+      },
+      {
+        "name": "Axiom",
+        "description": "Log management para Vercel",
+        "package": "@axiomhq/nextjs"
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Base model - extend as needed
+model Account {
+  id         String   @id @default(cuid())
+  externalId String   @unique // Auth provider user ID
+  email      String?  @unique
+  name       String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([externalId])
+}

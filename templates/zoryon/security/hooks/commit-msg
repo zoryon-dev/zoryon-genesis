@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Ler mensagem do commit
+commit_msg=$(cat "$1")
+
+# Padrão: tipo(escopo opcional): mensagem
+# Tipos válidos: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
+pattern="^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,}"
+
+if ! echo "$commit_msg" | grep -qE "$pattern"; then
+  echo "❌ Formato de commit inválido!\n"
+  echo "Use o formato: tipo(escopo): mensagem\n"
+  echo "Exemplos:"
+  echo "  feat: adicionar autenticação com Clerk"
+  echo "  fix(api): corrigir erro no endpoint de usuários"
+  echo "  docs: atualizar README\n"
+  echo "Tipos válidos:"
+  echo "  feat     - Nova funcionalidade"
+  echo "  fix      - Correção de bug"
+  echo "  docs     - Documentação"
+  echo "  style    - Formatação, ponto e vírgula, etc"
+  echo "  refactor - Refatoração de código"
+  echo "  test     - Adicionar/modificar testes"
+  echo "  chore    - Tarefas de manutenção"
+  echo "  perf     - Melhorias de performance"
+  echo "  ci       - Mudanças em CI/CD"
+  echo "  build    - Mudanças no build"
+  echo "  revert   - Reverter commit anterior\n"
+  exit 1
+fi

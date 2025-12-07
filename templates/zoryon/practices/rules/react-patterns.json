@@ -1,0 +1,206 @@
+{
+  "id": "react-patterns",
+  "name": "React Patterns & Best Practices",
+  "description": "Verifica padroes React, hooks e componentes",
+
+  "checks": [
+    {
+      "id": "large-component",
+      "name": "Componente Grande",
+      "description": "Componentes com mais de 250 linhas",
+      "severity": "medium",
+      "threshold": 250,
+      "fix": "Divida em componentes menores com responsabilidades unicas"
+    },
+    {
+      "id": "hooks-rules",
+      "name": "Regras de Hooks",
+      "description": "Verifica violacoes das regras de hooks",
+      "severity": "critical",
+      "patterns": {
+        "conditionalHook": {
+          "regex": "if\\s*\\([^)]*\\)\\s*{[^}]*use[A-Z]",
+          "message": "Hooks nao podem ser chamados condicionalmente"
+        },
+        "loopHook": {
+          "regex": "for\\s*\\([^)]*\\)\\s*{[^}]*use[A-Z]",
+          "message": "Hooks nao podem ser chamados em loops"
+        },
+        "nestedHook": {
+          "regex": "function\\s+\\w+[^{]*{[^}]*function[^}]*use[A-Z]",
+          "message": "Hooks nao podem ser chamados em funcoes aninhadas"
+        }
+      },
+      "fix": "Chame hooks apenas no nivel superior do componente"
+    },
+    {
+      "id": "useeffect-deps",
+      "name": "Dependencias de useEffect",
+      "description": "Verifica dependencias de useEffect",
+      "severity": "high",
+      "patterns": {
+        "emptyDeps": {
+          "regex": "useEffect\\([^,]+,\\s*\\[\\s*\\]\\)",
+          "message": "Array vazio pode esconder dependencias necessarias"
+        },
+        "noDeps": {
+          "regex": "useEffect\\([^)]+\\)\\s*[;\\n](?!\\s*,\\s*\\[)",
+          "message": "useEffect sem array de dependencias executa em todo render"
+        },
+        "objectInDeps": {
+          "regex": "useEffect\\([^,]+,\\s*\\[[^\\]]*{[^}]*}[^\\]]*\\]\\)",
+          "message": "Objetos em dependencias podem causar loops infinitos"
+        }
+      },
+      "fix": "Inclua todas as dependencias necessarias e use useCallback/useMemo para objetos"
+    },
+    {
+      "id": "state-management",
+      "name": "Gerenciamento de Estado",
+      "description": "Verifica uso adequado de estado",
+      "severity": "medium",
+      "patterns": {
+        "propDrilling": {
+          "maxDepth": 3,
+          "message": "Prop drilling excessivo - considere Context ou state manager"
+        },
+        "derivedState": {
+          "regex": "useState\\([^)]*\\).*\\n.*useEffect\\([^,]*set[A-Z]",
+          "message": "Estado derivado deve ser calculado durante render, nao em useEffect"
+        },
+        "objectState": {
+          "regex": "useState\\(\\{[^}]{100,}\\}\\)",
+          "message": "Estado complexo - considere useReducer"
+        }
+      },
+      "fix": "Use a abordagem correta para cada tipo de estado"
+    },
+    {
+      "id": "key-prop",
+      "name": "Key Prop",
+      "description": "Verifica uso correto de key em listas",
+      "severity": "high",
+      "patterns": {
+        "indexAsKey": {
+          "regex": "\\.map\\([^)]*,\\s*(?:index|i|idx)\\s*\\)[^}]*key=\\{(?:index|i|idx)\\}",
+          "message": "Evite usar index como key - pode causar bugs de re-render"
+        },
+        "missingKey": {
+          "regex": "\\.map\\([^)]*\\)\\s*=>\\s*(?:<[A-Z](?![^>]*key=))",
+          "message": "Key ausente em elemento de lista"
+        }
+      },
+      "fix": "Use IDs unicos e estaveis como key"
+    },
+    {
+      "id": "event-handlers",
+      "name": "Event Handlers",
+      "description": "Verifica padroes de event handlers",
+      "severity": "medium",
+      "patterns": {
+        "inlineFunction": {
+          "regex": "on[A-Z]\\w+=\\{\\s*\\([^)]*\\)\\s*=>",
+          "message": "Funcoes inline podem causar re-renders desnecessarios"
+        },
+        "bindInRender": {
+          "regex": "on[A-Z]\\w+=\\{[^}]*\\.bind\\(",
+          "message": ".bind() no render cria nova funcao a cada render"
+        }
+      },
+      "fix": "Use useCallback ou defina handlers fora do render"
+    },
+    {
+      "id": "conditional-rendering",
+      "name": "Renderizacao Condicional",
+      "description": "Verifica padroes de renderizacao condicional",
+      "severity": "low",
+      "patterns": {
+        "ternaryNesting": {
+          "regex": "\\?[^:]*\\?[^:]*:",
+          "message": "Ternarios aninhados reduzem legibilidade"
+        },
+        "andOperator": {
+          "regex": "\\{\\s*\\w+\\s*&&\\s*<",
+          "message": "Cuidado com && - 0 e '' renderizam, use ternario ou Boolean()"
+        }
+      },
+      "fix": "Use early returns ou extraia para componentes separados"
+    },
+    {
+      "id": "use-client-directive",
+      "name": "Diretiva use client",
+      "description": "Verifica uso correto de 'use client'",
+      "severity": "medium",
+      "patterns": {
+        "missingDirective": {
+          "hasHooks": true,
+          "noDirective": true,
+          "message": "Componente com hooks precisa de 'use client' no App Router"
+        },
+        "unnecessaryDirective": {
+          "hasDirective": true,
+          "noClientCode": true,
+          "message": "'use client' desnecessario - componente pode ser Server Component"
+        }
+      }
+    },
+    {
+      "id": "forward-ref",
+      "name": "ForwardRef Pattern",
+      "description": "Verifica uso de forwardRef em componentes reutilizaveis",
+      "severity": "info",
+      "context": ["ui-components", "atoms", "molecules"],
+      "recommendation": "Componentes de UI devem usar forwardRef para composicao"
+    },
+    {
+      "id": "controlled-vs-uncontrolled",
+      "name": "Controlled vs Uncontrolled",
+      "description": "Verifica mistura de controlled/uncontrolled inputs",
+      "severity": "high",
+      "patterns": {
+        "mixed": {
+          "regex": "value=\\{[^}]+\\}[^>]*defaultValue=",
+          "message": "Nao misture value e defaultValue no mesmo input"
+        }
+      }
+    }
+  ],
+
+  "componentPatterns": {
+    "recommended": {
+      "atomic": {
+        "atoms": "Elementos basicos (Button, Input, Badge)",
+        "molecules": "Grupos de atoms (Card, FormField, Alert)",
+        "organisms": "Secoes complexas (Header, DataTable, Form)",
+        "templates": "Layouts de pagina",
+        "pages": "Paginas completas"
+      },
+      "container-presentational": {
+        "container": "Logica e data fetching",
+        "presentational": "UI pura, recebe props"
+      }
+    }
+  },
+
+  "hooks": {
+    "custom": {
+      "naming": "use[NomeDescritivo]",
+      "location": "src/hooks/ ou junto ao feature",
+      "principles": [
+        "Responsabilidade unica",
+        "Evite god hooks",
+        "Extraia logica de dominio de componentes"
+      ]
+    },
+    "builtin": {
+      "useState": "Estado local simples",
+      "useReducer": "Estado complexo com acoes",
+      "useContext": "Acesso a contexto",
+      "useRef": "Referencias mutaveis sem re-render",
+      "useEffect": "Sincronizacao com sistemas externos",
+      "useMemo": "Memoizacao de valores (com cuidado)",
+      "useCallback": "Memoizacao de funcoes (com cuidado)",
+      "useId": "IDs unicos para SSR"
+    }
+  }
+}

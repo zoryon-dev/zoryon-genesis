@@ -1,0 +1,77 @@
+{
+  "id": "minimalism",
+  "name": "Minimalism",
+  "description": "Clean, uncluttered design with ample white space",
+
+  "characteristics": {
+    "layout": "spacious, grid-based, focused",
+    "whitespace": "generous negative space",
+    "colors": "neutral tones with one accent color",
+    "typography": "clean sans-serif, bold for emphasis",
+    "images": "minimal, purposeful, flat icons",
+    "effects": "no shadows, no gradients, flat aesthetic"
+  },
+
+  "palette": {
+    "background": "#FFFFFF",
+    "surface": "#F9FAFB",
+    "text": "#111827",
+    "textMuted": "#6B7280",
+    "border": "#E5E7EB"
+  },
+
+  "typography": {
+    "fontFamily": "Inter, system-ui, sans-serif",
+    "headingWeight": "700",
+    "bodyWeight": "400",
+    "lineHeight": "1.6"
+  },
+
+  "spacing": {
+    "sectionPadding": "py-24 lg:py-32",
+    "containerMax": "max-w-5xl",
+    "gap": "gap-8"
+  },
+
+  "components": {
+    "buttons": "rounded-lg px-6 py-3 font-medium transition-colors",
+    "cards": "bg-white border border-gray-100 rounded-xl p-6",
+    "badges": "text-sm font-medium px-3 py-1 rounded-full"
+  },
+
+  "tailwindClasses": {
+    "hero": "min-h-screen flex items-center justify-center text-center px-4",
+    "headline": "text-5xl md:text-7xl font-bold tracking-tight",
+    "subheadline": "text-xl text-gray-600 max-w-2xl mx-auto mt-6",
+    "cta": "bg-black text-white hover:bg-gray-800 rounded-lg px-8 py-4 text-lg font-medium",
+    "ctaSecondary": "border border-gray-300 hover:border-gray-400 rounded-lg px-8 py-4 text-lg"
+  },
+
+  "promptKeywords": [
+    "minimalist",
+    "clean layout",
+    "ample white space",
+    "single accent color",
+    "uncluttered",
+    "user-focused",
+    "simple typography",
+    "no decorative elements",
+    "flat design",
+    "modern and elegant"
+  ],
+
+  "doNot": [
+    "Use heavy shadows or gradients",
+    "Add decorative elements without purpose",
+    "Use more than 2-3 colors",
+    "Overcrowd sections with content",
+    "Use multiple font families"
+  ],
+
+  "inspirations": [
+    "apple.com",
+    "linear.app",
+    "notion.so",
+    "stripe.com/atlas"
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "id": "testing",
+  "name": "Testing Best Practices",
+  "description": "Verifica cobertura e qualidade de testes",
+
+  "checks": [
+    {
+      "id": "test-coverage",
+      "name": "Cobertura de Testes",
+      "description": "Verifica cobertura minima de testes",
+      "severity": "medium",
+      "thresholds": {
+        "minimum": 60,
+        "recommended": 80,
+        "ideal": 90
+      },
+      "files": {
+        "critical": [
+          "src/lib/**",
+          "src/hooks/**",
+          "src/utils/**"
+        ],
+        "recommended": [
+          "src/components/**",
+          "src/app/api/**"
+        ]
+      }
+    },
+    {
+      "id": "missing-tests",
+      "name": "Testes Ausentes",
+      "description": "Arquivos sem testes correspondentes",
+      "severity": "low",
+      "patterns": {
+        "components": {
+          "source": "src/components/**/*.tsx",
+          "test": "*.test.tsx OR *.spec.tsx"
+        },
+        "hooks": {
+          "source": "src/hooks/**/*.ts",
+          "test": "*.test.ts OR *.spec.ts"
+        },
+        "utils": {
+          "source": "src/utils/**/*.ts",
+          "test": "*.test.ts OR *.spec.ts"
+        }
+      }
+    },
+    {
+      "id": "test-quality",
+      "name": "Qualidade dos Testes",
+      "description": "Verifica qualidade dos testes existentes",
+      "severity": "medium",
+      "patterns": {
+        "renderOnly": {
+          "regex": "render\\([^)]+\\)\\s*\\n\\s*}\\s*\\)",
+          "message": "Teste apenas verifica render - adicione assertions de comportamento"
+        },
+        "noAssertions": {
+          "regex": "it\\([^)]+\\)\\s*,\\s*async?\\s*\\(\\)\\s*=>\\s*{[^}]*}\\s*\\)(?![^]*expect)",
+          "message": "Teste sem assertions"
+        },
+        "emptyTest": {
+          "regex": "it\\([^)]+\\)\\s*,\\s*\\(\\)\\s*=>\\s*{\\s*}\\s*\\)",
+          "message": "Teste vazio"
+        },
+        "todoTest": {
+          "regex": "it\\.(?:todo|skip)\\(",
+          "message": "Testes TODO ou skipped encontrados"
+        }
+      }
+    },
+    {
+      "id": "testing-library-patterns",
+      "name": "Padroes Testing Library",
+      "description": "Verifica uso correto de React Testing Library",
+      "severity": "medium",
+      "patterns": {
+        "containerQuery": {
+          "regex": "container\\.querySelector",
+          "message": "Evite container.querySelector - use queries semanticas"
+        },
+        "getByTestId": {
+          "regex": "getByTestId\\(",
+          "message": "Prefira queries semanticas (getByRole, getByLabelText) sobre getByTestId"
+        },
+        "findByTimeout": {
+          "regex": "findBy[^(]+\\([^,]+,\\s*{\\s*timeout:",
+          "message": "findBy ja espera - timeout customizado pode indicar problema"
+        },
+        "waitForMultiple": {
+          "regex": "waitFor\\([^)]*waitFor",
+          "message": "Evite waitFor aninhados"
+        }
+      }
+    },
+    {
+      "id": "mock-patterns",
+      "name": "Padroes de Mock",
+      "description": "Verifica uso apropriado de mocks",
+      "severity": "low",
+      "patterns": {
+        "excessiveMock": {
+          "description": "Muitos mocks podem indicar teste muito acoplado"
+        },
+        "mockReset": {
+          "regex": "jest\\.mock\\([^)]+\\)(?![^]*(?:beforeEach|afterEach)[^]*(?:mockClear|mockReset))",
+          "message": "Mocks devem ser limpos entre testes"
+        },
+        "mockImplementation": {
+          "recommendation": "Prefira mockReturnValue sobre mockImplementation quando possivel"
+        }
+      }
+    },
+    {
+      "id": "async-testing",
+      "name": "Testes Assincronos",
+      "description": "Verifica padroes de testes assincronos",
+      "severity": "medium",
+      "patterns": {
+        "missingAwait": {
+          "regex": "expect\\([^)]*\\)\\.resolves(?![^]*await)",
+          "message": ".resolves precisa de await"
+        },
+        "actWrapping": {
+          "regex": "await\\s+act\\(\\s*async",
+          "message": "React 18+ nao precisa de act() manual com Testing Library"
+        }
+      }
+    },
+    {
+      "id": "snapshot-overuse",
+      "name": "Uso Excessivo de Snapshots",
+      "description": "Snapshots grandes podem ser frageis",
+      "severity": "info",
+      "patterns": {
+        "largeSnapshot": {
+          "threshold": 100,
+          "message": "Snapshots muito grandes sao dificeis de revisar"
+        },
+        "inlineSnapshot": {
+          "recommendation": "Prefira inline snapshots para valores pequenos"
+        }
+      }
+    },
+    {
+      "id": "e2e-patterns",
+      "name": "Padroes E2E",
+      "description": "Verifica padroes de testes E2E com Playwright",
+      "severity": "low",
+      "patterns": {
+        "hardcodedWait": {
+          "regex": "page\\.waitForTimeout\\(",
+          "message": "Evite timeouts fixos - use waitFor ou locators"
+        },
+        "locatorStrategy": {
+          "recommendation": "Prefira getByRole, getByLabel sobre CSS selectors"
+        }
+      }
+    }
+  ],
+
+  "testingStack": {
+    "recommended": {
+      "unit": {
+        "framework": "Vitest",
+        "library": "React Testing Library",
+        "description": "Testes unitarios e de componentes"
+      },
+      "e2e": {
+        "framework": "Playwright",
+        "description": "Testes end-to-end"
+      },
+      "mocking": {
+        "api": "MSW (Mock Service Worker)",
+        "description": "Mock de APIs sem alterar codigo"
+      }
+    }
+  },
+
+  "structure": {
+    "recommended": {
+      "colocated": {
+        "pattern": "Component.tsx + Component.test.tsx na mesma pasta",
+        "description": "Testes junto aos arquivos testados"
+      },
+      "testFolder": {
+        "pattern": "__tests__/ ou tests/",
+        "description": "Pasta separada para testes"
+      }
+    },
+    "naming": {
+      "unit": "*.test.ts(x)",
+      "integration": "*.integration.test.ts(x)",
+      "e2e": "*.e2e.ts ou tests/e2e/*.spec.ts"
+    }
+  },
+
+  "recommendations": {
+    "priorities": [
+      "Teste comportamento, nao implementacao",
+      "Foque em user stories e fluxos criticos",
+      "Testes unitarios para logica pura",
+      "Testes de integracao para fluxos",
+      "E2E para jornadas criticas do usuario"
+    ],
+    "avoid": [
+      "Testar detalhes de implementacao",
+      "Snapshots de componentes inteiros",
+      "Mocks excessivos",
+      "Testes duplicados"
+    ]
+  }
+}

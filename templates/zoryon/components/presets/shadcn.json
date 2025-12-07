@@ -1,0 +1,85 @@
+{
+  "id": "shadcn",
+  "name": "shadcn/ui Style",
+  "description": "Preset baseado no design system shadcn/ui",
+
+  "styling": {
+    "library": "tailwind",
+    "variantSystem": "cva",
+    "utilityFunction": "cn from @/lib/utils"
+  },
+
+  "colors": {
+    "cssVariables": true,
+    "semantic": {
+      "background": "hsl(var(--background))",
+      "foreground": "hsl(var(--foreground))",
+      "card": "hsl(var(--card))",
+      "cardForeground": "hsl(var(--card-foreground))",
+      "primary": "hsl(var(--primary))",
+      "primaryForeground": "hsl(var(--primary-foreground))",
+      "secondary": "hsl(var(--secondary))",
+      "secondaryForeground": "hsl(var(--secondary-foreground))",
+      "muted": "hsl(var(--muted))",
+      "mutedForeground": "hsl(var(--muted-foreground))",
+      "accent": "hsl(var(--accent))",
+      "accentForeground": "hsl(var(--accent-foreground))",
+      "destructive": "hsl(var(--destructive))",
+      "destructiveForeground": "hsl(var(--destructive-foreground))",
+      "border": "hsl(var(--border))",
+      "input": "hsl(var(--input))",
+      "ring": "hsl(var(--ring))"
+    }
+  },
+
+  "typography": {
+    "fontFamily": "font-sans",
+    "sizes": {
+      "xs": "text-xs",
+      "sm": "text-sm",
+      "base": "text-base",
+      "lg": "text-lg",
+      "xl": "text-xl"
+    }
+  },
+
+  "spacing": {
+    "radius": {
+      "sm": "rounded-sm",
+      "md": "rounded-md",
+      "lg": "rounded-lg",
+      "full": "rounded-full"
+    }
+  },
+
+  "animations": {
+    "library": "tailwindcss-animate",
+    "common": {
+      "fadeIn": "animate-in fade-in-0",
+      "fadeOut": "animate-out fade-out-0",
+      "slideIn": "slide-in-from-top-2",
+      "slideOut": "slide-out-to-top-2"
+    }
+  },
+
+  "patterns": {
+    "focus": "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+    "disabled": "disabled:pointer-events-none disabled:opacity-50",
+    "hover": "transition-colors hover:bg-accent hover:text-accent-foreground"
+  },
+
+  "imports": {
+    "utils": "import { cn } from \"@/lib/utils\"",
+    "cva": "import { cva, type VariantProps } from \"class-variance-authority\"",
+    "react": "import * as React from \"react\"",
+    "icons": "import { LucideIcon } from \"lucide-react\""
+  },
+
+  "fileStructure": {
+    "extension": ".tsx",
+    "naming": "kebab-case",
+    "exportStyle": "named",
+    "useForwardRef": true,
+    "useDisplayName": true
+  }
+}

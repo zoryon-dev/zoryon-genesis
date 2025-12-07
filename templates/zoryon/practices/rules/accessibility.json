@@ -1,0 +1,222 @@
+{
+  "id": "accessibility",
+  "name": "Accessibility (a11y) Best Practices",
+  "description": "Verifica acessibilidade baseado em WCAG 2.2",
+
+  "checks": [
+    {
+      "id": "missing-alt",
+      "name": "Alt Text Ausente",
+      "description": "Imagens sem texto alternativo",
+      "severity": "critical",
+      "wcag": "1.1.1",
+      "patterns": [
+        "<img[^>]*(?!alt=)[^>]*>",
+        "<Image[^>]*(?!alt=)[^>]*>"
+      ],
+      "fix": "Adicione alt descritivo ou alt=\"\" para imagens decorativas"
+    },
+    {
+      "id": "empty-alt",
+      "name": "Alt Text Vazio",
+      "description": "Imagens com alt vazio que deveriam ter descricao",
+      "severity": "medium",
+      "wcag": "1.1.1",
+      "patterns": [
+        "<img[^>]*alt=\"\"[^>]*>",
+        "<Image[^>]*alt=\"\"[^>]*>"
+      ],
+      "context": "alt=\"\" e valido apenas para imagens decorativas"
+    },
+    {
+      "id": "missing-label",
+      "name": "Label Ausente",
+      "description": "Inputs sem label associado",
+      "severity": "critical",
+      "wcag": "1.3.1",
+      "patterns": [
+        "<input[^>]*(?!aria-label|aria-labelledby|id=)[^>]*>",
+        "<select[^>]*(?!aria-label|aria-labelledby|id=)[^>]*>",
+        "<textarea[^>]*(?!aria-label|aria-labelledby|id=)[^>]*>"
+      ],
+      "fix": "Use <label htmlFor=''> ou aria-label"
+    },
+    {
+      "id": "missing-button-text",
+      "name": "Botao sem Texto",
+      "description": "Botoes sem texto acessivel",
+      "severity": "critical",
+      "wcag": "2.4.4",
+      "patterns": [
+        "<button[^>]*>\\s*<(?:svg|img)[^>]*>\\s*</button>",
+        "<Button[^>]*>\\s*<(?:Icon|svg)[^>]*>\\s*</Button>"
+      ],
+      "fix": "Adicione aria-label ou texto visivel"
+    },
+    {
+      "id": "semantic-html",
+      "name": "HTML Semantico",
+      "description": "Uso de elementos nao semanticos",
+      "severity": "medium",
+      "wcag": "1.3.1",
+      "patterns": {
+        "divButton": {
+          "regex": "<div[^>]*onClick",
+          "message": "Use <button> ao inves de <div> com onClick"
+        },
+        "divLink": {
+          "regex": "<div[^>]*role=['\"]link['\"]",
+          "message": "Use <a> ou <Link> ao inves de div com role='link'"
+        },
+        "spanButton": {
+          "regex": "<span[^>]*onClick",
+          "message": "Use <button> ao inves de <span> com onClick"
+        }
+      },
+      "fix": "Use elementos HTML semanticos apropriados"
+    },
+    {
+      "id": "focus-management",
+      "name": "Gerenciamento de Foco",
+      "description": "Verifica problemas de foco",
+      "severity": "high",
+      "wcag": "2.4.7",
+      "patterns": {
+        "outlineNone": {
+          "regex": "outline:\\s*none|outline:\\s*0",
+          "message": "Nunca remova outline sem alternativa visivel"
+        },
+        "tabindexPositive": {
+          "regex": "tabIndex=['\"]?[1-9]",
+          "message": "Evite tabindex positivo - altera ordem natural de foco"
+        },
+        "tabindexNegativeInteractive": {
+          "regex": "<(?:button|a|input)[^>]*tabIndex=['\"]?-1",
+          "message": "tabIndex=-1 em elemento interativo pode causar problemas"
+        }
+      }
+    },
+    {
+      "id": "aria-usage",
+      "name": "Uso de ARIA",
+      "description": "Verifica uso correto de atributos ARIA",
+      "severity": "medium",
+      "wcag": "4.1.2",
+      "patterns": {
+        "redundantAria": {
+          "regex": "<button[^>]*role=['\"]button['\"]",
+          "message": "role='button' e redundante em <button>"
+        },
+        "ariaHiddenFocusable": {
+          "regex": "aria-hidden=['\"]true['\"][^>]*(?:tabIndex|href)",
+          "message": "Elementos com aria-hidden nao devem ser focaveis"
+        },
+        "invalidAriaRole": {
+          "description": "Verifica roles ARIA invalidos ou mal utilizados"
+        }
+      }
+    },
+    {
+      "id": "color-contrast",
+      "name": "Contraste de Cores",
+      "description": "Verifica indicadores de contraste",
+      "severity": "high",
+      "wcag": "1.4.3",
+      "recommendation": "Minimo 4.5:1 para texto normal, 3:1 para texto grande",
+      "tools": ["Lighthouse", "axe DevTools", "WebAIM Contrast Checker"]
+    },
+    {
+      "id": "keyboard-navigation",
+      "name": "Navegacao por Teclado",
+      "description": "Elementos interativos devem ser acessiveis por teclado",
+      "severity": "critical",
+      "wcag": "2.1.1",
+      "patterns": {
+        "mouseOnly": {
+          "regex": "onMouse(?:Over|Enter|Leave)[^>]*(?!onFocus|onBlur|onKey)",
+          "message": "Eventos de mouse devem ter equivalentes de teclado"
+        },
+        "clickOnly": {
+          "regex": "<div[^>]*onClick[^>]*(?!onKeyDown|onKeyPress|onKeyUp|tabIndex)",
+          "message": "onClick em div precisa de tratamento de teclado"
+        }
+      }
+    },
+    {
+      "id": "heading-hierarchy",
+      "name": "Hierarquia de Headings",
+      "description": "Headings devem seguir ordem logica",
+      "severity": "medium",
+      "wcag": "1.3.1",
+      "rules": [
+        "Nao pule niveis (h1 -> h3 sem h2)",
+        "Apenas um h1 por pagina",
+        "Headings devem descrever o conteudo"
+      ]
+    },
+    {
+      "id": "form-validation",
+      "name": "Validacao de Formulario",
+      "description": "Erros de formulario devem ser acessiveis",
+      "severity": "medium",
+      "wcag": "3.3.1",
+      "patterns": {
+        "errorNoAria": {
+          "description": "Mensagens de erro devem usar aria-describedby ou aria-errormessage"
+        },
+        "requiredNoAria": {
+          "regex": "<input[^>]*required[^>]*(?!aria-required)",
+          "message": "Considere adicionar aria-required para melhor suporte"
+        }
+      }
+    },
+    {
+      "id": "target-size",
+      "name": "Tamanho de Alvo",
+      "description": "Elementos clicaveis devem ter tamanho minimo",
+      "severity": "medium",
+      "wcag": "2.5.8",
+      "recommendation": "Minimo 24x24 CSS pixels (WCAG 2.2)"
+    }
+  ],
+
+  "testing": {
+    "tools": [
+      {
+        "name": "eslint-plugin-jsx-a11y",
+        "description": "Linting de acessibilidade em tempo de desenvolvimento"
+      },
+      {
+        "name": "@axe-core/react",
+        "description": "Auditoria de acessibilidade em runtime (dev)"
+      },
+      {
+        "name": "Lighthouse",
+        "description": "Auditoria de acessibilidade do Chrome DevTools"
+      },
+      {
+        "name": "NVDA / VoiceOver",
+        "description": "Teste com screen readers reais"
+      }
+    ],
+    "manual": [
+      "Navegue usando apenas teclado (Tab, Shift+Tab, Enter, Esc)",
+      "Use screen reader para verificar anuncios",
+      "Teste com zoom 200%",
+      "Verifique modo de alto contraste"
+    ]
+  },
+
+  "recommendations": {
+    "components": [
+      "Use bibliotecas a11y-first como ARIAKit, Radix UI, React Aria",
+      "Teste componentes com screen readers",
+      "Inclua eslint-plugin-jsx-a11y no projeto"
+    ],
+    "design": [
+      "Contraste minimo 4.5:1",
+      "Alvos de toque minimo 44x44 (mobile) ou 24x24 (desktop)",
+      "Nao dependa apenas de cor para informacao"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Verificando código antes do commit...\n"
+
+# Executar lint
+echo "📝 Lint..."
+pnpm lint || {
+  echo "\n❌ Erro no lint. Corrija os erros antes de commitar."
+  exit 1
+}
+
+# Executar typecheck
+echo "\n🔷 TypeScript..."
+pnpm typecheck || {
+  echo "\n❌ Erro no typecheck. Corrija os erros de tipo antes de commitar."
+  exit 1
+}
+
+# Executar scan de segurança
+if [ -f ".zoryon/security/scan.mjs" ]; then
+  echo "\n🔒 Segurança..."
+  node .zoryon/security/scan.mjs || {
+    echo "\n❌ Problemas de segurança detectados. Remova secrets antes de commitar."
+    exit 1
+  }
+fi
+
+echo "\n✅ Tudo certo! Prosseguindo com o commit...\n"

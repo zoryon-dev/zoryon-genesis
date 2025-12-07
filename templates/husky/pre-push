@@ -1,0 +1,20 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🚀 Verificando antes do push..."
+
+# Executar testes
+echo "🧪 Executando testes..."
+pnpm test:unit || {
+  echo "❌ Testes falharam. Corrija antes de fazer push."
+  exit 1
+}
+
+# Build (opcional, pode ser lento)
+# echo "🔨 Verificando build..."
+# pnpm build || {
+#   echo "❌ Build falhou. Corrija antes de fazer push."
+#   exit 1
+# }
+
+echo "✅ Tudo certo! Enviando para o repositório remoto..."

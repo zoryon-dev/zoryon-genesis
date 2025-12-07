@@ -1,0 +1,91 @@
+{
+  "id": "security-headers",
+  "name": "Security Headers Checks",
+  "description": "Verifica configuracao de HTTP Security Headers",
+
+  "requiredHeaders": [
+    {
+      "id": "csp",
+      "name": "Content-Security-Policy",
+      "description": "Previne XSS e injecao de conteudo",
+      "severity": "high",
+      "owasp": "A03:2025",
+      "recommended": "default-src 'self'; script-src 'self' 'nonce-{random}'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/CSP"
+    },
+    {
+      "id": "hsts",
+      "name": "Strict-Transport-Security",
+      "description": "Forca uso de HTTPS",
+      "severity": "high",
+      "owasp": "A02:2025",
+      "recommended": "max-age=63072000; includeSubDomains; preload",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/Headers/Strict-Transport-Security"
+    },
+    {
+      "id": "x-frame-options",
+      "name": "X-Frame-Options",
+      "description": "Previne clickjacking",
+      "severity": "medium",
+      "owasp": "A05:2025",
+      "recommended": "DENY",
+      "note": "Use frame-ancestors no CSP como alternativa moderna",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Frame-Options"
+    },
+    {
+      "id": "x-content-type-options",
+      "name": "X-Content-Type-Options",
+      "description": "Previne MIME type sniffing",
+      "severity": "medium",
+      "owasp": "A05:2025",
+      "recommended": "nosniff",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Content-Type-Options"
+    },
+    {
+      "id": "referrer-policy",
+      "name": "Referrer-Policy",
+      "description": "Controla informacao de referrer",
+      "severity": "low",
+      "owasp": "A05:2025",
+      "recommended": "strict-origin-when-cross-origin",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/Headers/Referrer-Policy"
+    },
+    {
+      "id": "permissions-policy",
+      "name": "Permissions-Policy",
+      "description": "Controla APIs do browser",
+      "severity": "low",
+      "owasp": "A05:2025",
+      "recommended": "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/Headers/Permissions-Policy"
+    },
+    {
+      "id": "x-xss-protection",
+      "name": "X-XSS-Protection",
+      "description": "Filtro XSS do browser (legado)",
+      "severity": "low",
+      "owasp": "A03:2025",
+      "recommended": "0",
+      "note": "Desabilitar em favor do CSP. Pode causar vulnerabilidades em browsers antigos.",
+      "documentation": "https://developer.mozilla.org/docs/Web/HTTP/Headers/X-XSS-Protection"
+    }
+  ],
+
+  "nextjsConfig": {
+    "example": "const securityHeaders = [\n  {\n    key: 'Content-Security-Policy',\n    value: \"default-src 'self'; script-src 'self'\"\n  },\n  {\n    key: 'Strict-Transport-Security',\n    value: 'max-age=63072000; includeSubDomains; preload'\n  },\n  {\n    key: 'X-Frame-Options',\n    value: 'DENY'\n  },\n  {\n    key: 'X-Content-Type-Options',\n    value: 'nosniff'\n  },\n  {\n    key: 'Referrer-Policy',\n    value: 'strict-origin-when-cross-origin'\n  },\n  {\n    key: 'Permissions-Policy',\n    value: 'camera=(), microphone=(), geolocation=()'\n  }\n]\n\nmodule.exports = {\n  async headers() {\n    return [\n      {\n        source: '/(.*)',\n        headers: securityHeaders\n      }\n    ]\n  }\n}",
+    "location": "next.config.js ou next.config.mjs"
+  },
+
+  "patterns": {
+    "cspInCode": {
+      "pattern": "Content-Security-Policy",
+      "files": ["next.config.*", "middleware.ts", "middleware.js"],
+      "check": "exists"
+    },
+    "hstsInCode": {
+      "pattern": "Strict-Transport-Security",
+      "files": ["next.config.*", "middleware.ts", "vercel.json"],
+      "check": "exists"
+    }
+  }
+}

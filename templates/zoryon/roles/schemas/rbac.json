@@ -1,0 +1,20 @@
+{
+  "schema": "prisma",
+  "name": "RBAC Schema",
+  "description": "Schema Prisma para Role-Based Access Control",
+
+  "template": "// RBAC Models\n\nmodel User {\n  id          String   @id @default(cuid())\n  email       String   @unique\n  name        String?\n  role        Role     @default(USER)\n  permissions UserPermission[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n\nenum Role {\n  ADMIN\n  EDITOR\n  VIEWER\n  USER\n}\n\nmodel Permission {\n  id          String   @id @default(cuid())\n  action      String   // ex: create, read, update, delete\n  resource    String   // ex: post, user, comment\n  description String?\n  users       UserPermission[]\n  \n  @@unique([action, resource])\n}\n\nmodel UserPermission {\n  id           String     @id @default(cuid())\n  userId       String\n  permissionId String\n  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)\n  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)\n  createdAt    DateTime   @default(now())\n  \n  @@unique([userId, permissionId])\n}",
+
+  "permissions_examples": {
+    "posts": ["posts:create", "posts:read", "posts:update", "posts:delete"],
+    "users": ["users:read", "users:update", "users:delete", "users:manage"],
+    "comments": ["comments:create", "comments:read", "comments:moderate"]
+  },
+
+  "role_permissions": {
+    "ADMIN": ["*:*"],
+    "EDITOR": ["posts:*", "comments:moderate"],
+    "VIEWER": ["posts:read", "comments:read"],
+    "USER": ["posts:read", "comments:create"]
+  }
+}

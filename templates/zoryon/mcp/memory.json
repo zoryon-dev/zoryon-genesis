@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-memory"],
+      "_comment": "Permite que a IA lembre informações entre sessões"
+    }
+  }
+}

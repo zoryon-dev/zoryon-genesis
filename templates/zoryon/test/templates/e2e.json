@@ -1,0 +1,21 @@
+{
+  "type": "e2e",
+  "pattern": "user-flow",
+  "description": "Template para teste E2E com Playwright",
+
+  "template": "import { test, expect } from '@playwright/test'\n\ntest.describe('{{FLOW_NAME}}', () => {\n  test.beforeEach(async ({ page }) => {\n    await page.goto('/')\n  })\n\n  test('should complete {{FLOW_NAME}} successfully', async ({ page }) => {\n    // Step 1: Navigate to start point\n    await page.click('text={{BUTTON_TEXT}}')\n    await expect(page).toHaveURL(/{{URL_PATTERN}}/)\n\n    // Step 2: Fill form or interact\n    await page.fill('input[name=\"{{INPUT_NAME}}\"]', '{{TEST_VALUE}}')\n    \n    // Step 3: Submit or proceed\n    await page.click('button[type=\"submit\"]')\n    \n    // Step 4: Verify success\n    await expect(page.locator('text={{SUCCESS_MESSAGE}}')).toBeVisible()\n  })\n\n  test('should show validation errors', async ({ page }) => {\n    await page.click('text={{BUTTON_TEXT}}')\n    await page.click('button[type=\"submit\"]')\n    \n    await expect(page.locator('text={{ERROR_MESSAGE}}')).toBeVisible()\n  })\n})\n",
+
+  "withAuth": "import { test, expect } from '@playwright/test'\n\ntest.describe('{{FLOW_NAME}} (Authenticated)', () => {\n  test.use({ storageState: 'playwright/.auth/user.json' })\n\n  test('should access protected page', async ({ page }) => {\n    await page.goto('/dashboard')\n    \n    await expect(page).toHaveURL(/dashboard/)\n    await expect(page.locator('h1')).toContainText('Dashboard')\n  })\n})\n",
+
+  "withAPI": "import { test, expect } from '@playwright/test'\n\ntest.describe('{{FLOW_NAME}} with API', () => {\n  test('should handle API calls', async ({ page }) => {\n    // Mock API response\n    await page.route('**/api/{{ENDPOINT}}', async (route) => {\n      await route.fulfill({\n        status: 200,\n        contentType: 'application/json',\n        body: JSON.stringify({ success: true, data: [] }),\n      })\n    })\n\n    await page.goto('/{{PAGE}}')\n    \n    // Verify page updated with mocked data\n    await expect(page.locator('{{SELECTOR}}')).toBeVisible()\n  })\n\n  test('should handle API errors', async ({ page }) => {\n    await page.route('**/api/{{ENDPOINT}}', async (route) => {\n      await route.fulfill({\n        status: 500,\n        contentType: 'application/json',\n        body: JSON.stringify({ error: 'Server error' }),\n      })\n    })\n\n    await page.goto('/{{PAGE}}')\n    \n    await expect(page.locator('text={{ERROR_MESSAGE}}')).toBeVisible()\n  })\n})\n",
+
+  "patterns": {
+    "login": "Login flow with authentication",
+    "signup": "User registration flow",
+    "checkout": "E-commerce checkout process",
+    "search": "Search and filter functionality",
+    "crud": "Create, Read, Update, Delete operations",
+    "navigation": "Navigation and routing",
+    "form": "Form submission and validation"
+  }
+}

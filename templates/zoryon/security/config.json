@@ -1,0 +1,173 @@
+{
+  "id": "zory-security",
+  "name": "Zory-Security",
+  "version": "0.0.3",
+  "description": "Agente de auditoria de seguranca para aplicacoes web",
+
+  "modes": {
+    "scan": {
+      "name": "Quick Scan",
+      "description": "Verifica secrets e vulnerabilidades rapidamente",
+      "checks": ["secrets", "vulnerabilities", "sensitive-files"]
+    },
+    "audit": {
+      "name": "Full Audit",
+      "description": "Auditoria completa de seguranca (OWASP Top 10 2025)",
+      "checks": ["all"]
+    },
+    "deps": {
+      "name": "Dependency Check",
+      "description": "Verifica vulnerabilidades em dependencias (npm audit)",
+      "checks": ["dependencies"]
+    },
+    "headers": {
+      "name": "Headers Check",
+      "description": "Verifica configuracao de security headers",
+      "checks": ["security-headers"]
+    },
+    "report": {
+      "name": "Generate Report",
+      "description": "Gera relatorio completo de seguranca em JSON/MD",
+      "checks": ["all"]
+    }
+  },
+
+  "categories": {
+    "secrets": {
+      "id": "SEC-01",
+      "name": "Secrets & API Keys",
+      "description": "Verifica vazamento de chaves e credenciais",
+      "owasp": "A02:2025 - Cryptographic Failures",
+      "severity": "critical"
+    },
+    "vulnerabilities": {
+      "id": "SEC-02",
+      "name": "Code Vulnerabilities",
+      "description": "Detecta padroes vulneraveis no codigo",
+      "owasp": "A03:2025 - Injection",
+      "severity": "critical"
+    },
+    "dependencies": {
+      "id": "SEC-03",
+      "name": "Dependencies",
+      "description": "Verifica vulnerabilidades em pacotes",
+      "owasp": "A06:2025 - Vulnerable Components",
+      "severity": "high"
+    },
+    "authentication": {
+      "id": "SEC-04",
+      "name": "Authentication & Authorization",
+      "description": "Verifica implementacao de auth",
+      "owasp": "A07:2025 - Auth Failures",
+      "severity": "critical"
+    },
+    "input-validation": {
+      "id": "SEC-05",
+      "name": "Input Validation",
+      "description": "Verifica validacao de entradas",
+      "owasp": "A03:2025 - Injection",
+      "severity": "high"
+    },
+    "security-headers": {
+      "id": "SEC-06",
+      "name": "Security Headers",
+      "description": "Verifica headers HTTP de seguranca",
+      "owasp": "A05:2025 - Security Misconfiguration",
+      "severity": "medium"
+    },
+    "logging": {
+      "id": "SEC-07",
+      "name": "Logging & Monitoring",
+      "description": "Verifica implementacao de logs",
+      "owasp": "A09:2025 - Logging Failures",
+      "severity": "medium"
+    },
+    "https": {
+      "id": "SEC-08",
+      "name": "HTTPS & TLS",
+      "description": "Verifica configuracao de HTTPS",
+      "owasp": "A02:2025 - Cryptographic Failures",
+      "severity": "high"
+    },
+    "access-control": {
+      "id": "SEC-09",
+      "name": "Access Control",
+      "description": "Verifica controle de acesso",
+      "owasp": "A01:2025 - Broken Access Control",
+      "severity": "critical"
+    },
+    "error-handling": {
+      "id": "SEC-10",
+      "name": "Error Handling",
+      "description": "Verifica tratamento de erros",
+      "owasp": "A10:2025 - Exceptional Conditions",
+      "severity": "medium"
+    }
+  },
+
+  "owasp2025": {
+    "A01": "Broken Access Control",
+    "A02": "Cryptographic Failures",
+    "A03": "Injection (SQL, XSS, Command)",
+    "A04": "Insecure Design",
+    "A05": "Security Misconfiguration",
+    "A06": "Vulnerable and Outdated Components",
+    "A07": "Identification and Authentication Failures",
+    "A08": "Software and Data Integrity Failures",
+    "A09": "Security Logging and Monitoring Failures",
+    "A10": "Mishandling of Exceptional Conditions"
+  },
+
+  "severityLevels": {
+    "critical": {
+      "icon": "🔴",
+      "color": "red",
+      "weight": 10,
+      "description": "Risco critico - corrigir imediatamente"
+    },
+    "high": {
+      "icon": "🟠",
+      "color": "orange",
+      "weight": 7,
+      "description": "Risco alto - corrigir antes do deploy"
+    },
+    "medium": {
+      "icon": "🟡",
+      "color": "yellow",
+      "weight": 4,
+      "description": "Risco medio - planejar correcao"
+    },
+    "low": {
+      "icon": "🟢",
+      "color": "green",
+      "weight": 1,
+      "description": "Risco baixo - melhorar quando possivel"
+    },
+    "info": {
+      "icon": "🔵",
+      "color": "blue",
+      "weight": 0,
+      "description": "Informativo - recomendacao"
+    }
+  },
+
+  "frameworks": {
+    "nextjs": {
+      "configFiles": ["next.config.js", "next.config.mjs", "next.config.ts"],
+      "headersLocation": "next.config.js",
+      "middlewareFile": "middleware.ts"
+    },
+    "express": {
+      "configFiles": ["app.js", "server.js", "index.js"],
+      "headersPackage": "helmet"
+    }
+  },
+
+  "reportFormats": ["json", "markdown", "html"],
+
+  "defaultReport": {
+    "format": "markdown",
+    "outputDir": ".zoryon/reports",
+    "filename": "security-audit-report"
+  }
+}

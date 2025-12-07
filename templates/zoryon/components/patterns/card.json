@@ -1,0 +1,85 @@
+{
+  "id": "card",
+  "name": "Card",
+  "type": "molecule",
+  "description": "Container visual com header, content e footer",
+
+  "element": "div",
+  "elementType": "Div",
+
+  "baseStyles": "rounded-lg border bg-card text-card-foreground shadow-sm",
+
+  "variants": {
+    "variant": {
+      "default": "border-border",
+      "outlined": "border-2 border-primary/20",
+      "elevated": "shadow-lg border-0",
+      "ghost": "border-transparent shadow-none bg-transparent"
+    },
+    "size": {
+      "sm": "p-4",
+      "md": "p-6",
+      "lg": "p-8"
+    }
+  },
+
+  "defaultVariants": {
+    "variant": "default",
+    "size": "md"
+  },
+
+  "subComponents": [
+    {
+      "name": "CardHeader",
+      "description": "Cabeçalho do card",
+      "styles": "flex flex-col space-y-1.5 p-6"
+    },
+    {
+      "name": "CardTitle",
+      "description": "Título do card",
+      "element": "h3",
+      "styles": "text-2xl font-semibold leading-none tracking-tight"
+    },
+    {
+      "name": "CardDescription",
+      "description": "Descrição/subtítulo",
+      "element": "p",
+      "styles": "text-sm text-muted-foreground"
+    },
+    {
+      "name": "CardContent",
+      "description": "Conteúdo principal",
+      "styles": "p-6 pt-0"
+    },
+    {
+      "name": "CardFooter",
+      "description": "Rodapé com ações",
+      "styles": "flex items-center p-6 pt-0"
+    }
+  ],
+
+  "features": {
+    "hasChildren": true,
+    "hasIcon": false,
+    "hasLoading": false,
+    "hasDisabled": false
+  },
+
+  "props": [],
+
+  "examples": [
+    {
+      "name": "Basic",
+      "code": "<Card>\n  <CardHeader>\n    <CardTitle>Título</CardTitle>\n    <CardDescription>Descrição</CardDescription>\n  </CardHeader>\n  <CardContent>Conteúdo</CardContent>\n  <CardFooter>Ações</CardFooter>\n</Card>"
+    },
+    {
+      "name": "Elevated",
+      "code": "<Card variant=\"elevated\">Conteúdo com sombra</Card>"
+    }
+  ],
+
+  "accessibility": {
+    "role": "article",
+    "ariaLabelledby": "ID do título"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"],
+      "_comment": "Permite buscar documentação atualizada de bibliotecas"
+    }
+  }
+}

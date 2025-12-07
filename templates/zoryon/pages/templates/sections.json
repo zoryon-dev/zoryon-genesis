@@ -1,0 +1,142 @@
+{
+  "hero": {
+    "name": "Hero Section",
+    "description": "The first thing visitors see - must capture attention and communicate value",
+    "promptTemplate": "Create a hero section with:\n- A compelling headline that communicates the main benefit: '{{headline}}'\n- A subheadline that expands on the value: '{{subheadline}}'\n- Primary CTA button: '{{cta}}'\n- {{heroVisual}}\n- Use {{style}} visual style with {{animationLevel}} animations\n- Ensure the CTA stands out with contrasting color\n- Add subtle social proof if applicable (e.g., '10,000+ users' badge)",
+    "variables": ["headline", "subheadline", "cta", "heroVisual", "style", "animationLevel"],
+    "components": ["Button", "Badge"],
+    "animations": {
+      "none": "No animations, static content",
+      "subtle": "Fade in on load, hover effects on CTA",
+      "moderate": "Staggered text reveal, smooth CTA hover",
+      "rich": "AnimatedGradientText for headline, TypingAnimation for subheadline, floating elements"
+    }
+  },
+
+  "logos": {
+    "name": "Social Proof Logos",
+    "description": "Build trust by showing recognizable brands",
+    "promptTemplate": "Create a 'Trusted by' section with:\n- A subtle heading like 'Trusted by leading companies' or 'Used by teams at'\n- A row of 5-8 grayscale company logos\n- Logos should be evenly spaced and responsive\n- On mobile, show 4 logos in a row or use a subtle marquee\n- Keep it understated - this section supports, not dominates",
+    "components": [],
+    "animations": {
+      "none": "Static logo grid",
+      "subtle": "Fade in on scroll",
+      "moderate": "Staggered fade in",
+      "rich": "Infinite marquee scroll animation"
+    }
+  },
+
+  "features": {
+    "name": "Features Section",
+    "description": "Highlight key benefits with icons and brief descriptions",
+    "promptTemplate": "Create a features section with:\n- Section headline: '{{sectionTitle}}'\n- {{featureCount}} feature cards in a responsive grid\n- Each card has: icon, title, description (2-3 sentences max)\n- Features to highlight: {{features}}\n- Use {{style}} visual style\n- Focus on BENEFITS, not just features\n- Icons should be from lucide-react",
+    "variables": ["sectionTitle", "featureCount", "features", "style"],
+    "components": ["Card"],
+    "layouts": ["3-column-grid", "alternating", "icon-list"],
+    "animations": {
+      "none": "Static cards",
+      "subtle": "Fade in on scroll",
+      "moderate": "Staggered card reveal with viewport trigger",
+      "rich": "AnimatedBorderCard for hover, icon animations"
+    }
+  },
+
+  "how-it-works": {
+    "name": "How It Works",
+    "description": "Simple step-by-step explanation of the process",
+    "promptTemplate": "Create a 'How It Works' section with:\n- Section headline\n- 3 numbered steps with icons and descriptions\n- Steps: {{steps}}\n- Visual connection between steps (line, arrow, or flow)\n- Each step should be concise - one sentence\n- Optional: small illustration or screenshot per step",
+    "variables": ["steps"],
+    "components": ["Card"],
+    "animations": {
+      "none": "Static steps",
+      "subtle": "Sequential fade in",
+      "moderate": "Animated step reveal on scroll",
+      "rich": "Connected line animation, step highlights"
+    }
+  },
+
+  "testimonials": {
+    "name": "Testimonials",
+    "description": "Social proof through customer quotes",
+    "promptTemplate": "Create a testimonials section with:\n- Section headline: 'What our customers say' or similar\n- {{testimonialCount}} testimonial cards\n- Each testimonial has: quote, author name, role, company, optional photo\n- Testimonials: {{testimonials}}\n- Include star rating if applicable\n- Layout: {{testimonialLayout}}",
+    "variables": ["testimonialCount", "testimonials", "testimonialLayout"],
+    "layouts": ["grid", "carousel", "featured-large"],
+    "components": ["Card", "Avatar"],
+    "animations": {
+      "none": "Static testimonials",
+      "subtle": "Fade in",
+      "moderate": "Carousel auto-scroll",
+      "rich": "3D card rotation, animated quotes"
+    }
+  },
+
+  "pricing": {
+    "name": "Pricing Section",
+    "description": "Clear pricing tiers with feature comparison",
+    "promptTemplate": "Create a pricing section with:\n- Section headline\n- {{planCount}} pricing tiers\n- Plans: {{plans}}\n- Highlight the recommended/popular plan with a badge and border\n- Each plan shows: name, price, billing period, features list, CTA\n- Include a toggle for monthly/annual if applicable\n- Make the CTA different for each tier (e.g., 'Start Free' vs 'Contact Sales')",
+    "variables": ["planCount", "plans"],
+    "components": ["Card", "Button", "Badge", "Switch"],
+    "animations": {
+      "none": "Static pricing cards",
+      "subtle": "Hover lift effect",
+      "moderate": "Staggered reveal, animated toggle",
+      "rich": "AnimatedBorderCard for popular plan"
+    }
+  },
+
+  "faq": {
+    "name": "FAQ Section",
+    "description": "Address common questions and objections",
+    "promptTemplate": "Create an FAQ section with:\n- Section headline: 'Frequently Asked Questions'\n- {{faqCount}} questions in an accordion format\n- Questions: {{faqs}}\n- Use shadcn/ui Accordion component\n- Include a 'Still have questions? Contact us' link at the bottom",
+    "variables": ["faqCount", "faqs"],
+    "components": ["Accordion"],
+    "animations": {
+      "none": "Standard accordion",
+      "subtle": "Smooth expand/collapse",
+      "moderate": "Animated chevron rotation",
+      "rich": "Content fade in on expand"
+    }
+  },
+
+  "cta-final": {
+    "name": "Final CTA Section",
+    "description": "Last chance to convert - reinforce value",
+    "promptTemplate": "Create a final CTA section with:\n- Compelling headline that reinforces the main benefit\n- Brief supporting text (1-2 sentences)\n- Primary CTA button: '{{cta}}'\n- Optional: secondary CTA or contact link\n- Background should contrast with other sections\n- Add urgency element if appropriate",
+    "variables": ["cta"],
+    "components": ["Button"],
+    "animations": {
+      "none": "Static CTA",
+      "subtle": "Fade in on scroll",
+      "moderate": "Background gradient animation",
+      "rich": "Pulsing CTA, animated background"
+    }
+  },
+
+  "stats": {
+    "name": "Statistics Section",
+    "description": "Impressive numbers that build credibility",
+    "promptTemplate": "Create a stats section with:\n- 3-4 impressive statistics\n- Stats: {{stats}}\n- Large numbers with labels below\n- Responsive grid layout\n- Consider number counter animation",
+    "variables": ["stats"],
+    "components": [],
+    "animations": {
+      "none": "Static numbers",
+      "subtle": "Fade in",
+      "moderate": "Counter animation on scroll",
+      "rich": "NumberTicker component with rolling numbers"
+    }
+  },
+
+  "form": {
+    "name": "Lead Capture Form",
+    "description": "Email/contact capture form",
+    "promptTemplate": "Create a lead capture form with:\n- Headline explaining what they get\n- Form fields: {{formFields}}\n- Submit button: '{{submitText}}'\n- Privacy note below form\n- Form should be simple - fewer fields = higher conversion\n- Consider inline validation",
+    "variables": ["formFields", "submitText"],
+    "components": ["Input", "Button", "Label"],
+    "animations": {
+      "none": "Static form",
+      "subtle": "Focus states",
+      "moderate": "Success animation on submit",
+      "rich": "Field reveal animation, confetti on success"
+    }
+  }
+}

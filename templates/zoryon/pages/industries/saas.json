@@ -1,0 +1,90 @@
+{
+  "id": "saas",
+  "name": "SaaS / Software",
+  "description": "Software-as-a-Service landing pages focused on trials and conversions",
+
+  "audience": {
+    "primary": ["Product managers", "Developers", "Business owners", "Teams"],
+    "painPoints": ["Manual processes", "Lack of integration", "Time waste", "Scalability issues"],
+    "desires": ["Automation", "Efficiency", "Growth", "Simplicity"]
+  },
+
+  "copyGuidelines": {
+    "tone": "Professional yet approachable, confident but not arrogant",
+    "headlines": "Focus on outcomes and benefits, not features",
+    "cta": "Action-oriented: Start Free Trial, Get Started Free, Try for Free",
+    "proofTypes": ["Customer logos", "Testimonials", "Case study snippets", "Usage stats"]
+  },
+
+  "recommendedSections": [
+    {
+      "id": "hero",
+      "required": true,
+      "elements": ["headline", "subheadline", "cta", "product-screenshot", "social-proof-mini"]
+    },
+    {
+      "id": "logos",
+      "required": true,
+      "elements": ["trusted-by-text", "logo-row"],
+      "note": "Show 5-8 recognizable client logos"
+    },
+    {
+      "id": "features",
+      "required": true,
+      "elements": ["feature-cards", "icons", "benefit-text"],
+      "layout": "3-column grid or alternating left-right"
+    },
+    {
+      "id": "how-it-works",
+      "required": false,
+      "elements": ["numbered-steps", "illustrations"],
+      "note": "3 simple steps maximum"
+    },
+    {
+      "id": "testimonials",
+      "required": true,
+      "elements": ["quote", "photo", "name", "role", "company"],
+      "note": "Include specific results when possible"
+    },
+    {
+      "id": "pricing",
+      "required": false,
+      "elements": ["plan-cards", "feature-comparison", "cta-per-plan"],
+      "note": "Highlight most popular plan"
+    },
+    {
+      "id": "faq",
+      "required": false,
+      "elements": ["accordion", "contact-link"],
+      "note": "Address common objections"
+    },
+    {
+      "id": "cta-final",
+      "required": true,
+      "elements": ["headline", "cta-button", "guarantee-text"],
+      "note": "Reinforce value proposition"
+    }
+  ],
+
+  "conversionTips": [
+    "Show product UI in hero - users want to see what they're getting",
+    "Include specific numbers: '10,000+ teams', 'Save 5h/week'",
+    "Offer free trial without credit card when possible",
+    "Add security badges if handling sensitive data",
+    "Show integrations with popular tools"
+  ],
+
+  "visualStyle": {
+    "recommended": ["minimalism", "gradient"],
+    "colors": "Blues, teals, purples (trust + innovation)",
+    "imagery": "Product screenshots, abstract shapes, team photos"
+  },
+
+  "promptEnhancements": [
+    "Include a product screenshot mockup in the hero section",
+    "Show customer logos in a 'Trusted by' banner below the hero",
+    "Use icons to represent features, not just text",
+    "Add a testimonial with specific metrics/results",
+    "Include a floating CTA or sticky header on scroll"
+  ]
+}

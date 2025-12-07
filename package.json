@@ -1,0 +1,31 @@
+{
+  "name": "create-zoryon-genesis",
+  "version": "0.1.0-alpha.2",
+  "description": "Zoryon Genesis - Template Next.js completo e configurável",
+  "type": "module",
+  "bin": {
+    "create-zoryon-genesis": "./scripts/create.mjs"
+  },
+  "scripts": {
+    "create": "node scripts/create.mjs"
+  },
+  "keywords": [
+    "zoryon",
+    "genesis",
+    "nextjs",
+    "template",
+    "turborepo",
+    "prisma",
+    "clerk",
+    "supabase"
+  ],
+  "author": "Jonas Silva <contato@zoryon.org> (https://zoryon.org/)",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.8.0",
+    "picocolors": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

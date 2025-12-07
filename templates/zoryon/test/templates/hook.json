@@ -1,0 +1,9 @@
+{
+  "type": "unit",
+  "pattern": "hook",
+  "description": "Template para teste de custom hook",
+
+  "template": "import { renderHook, act, waitFor } from '@testing-library/react'\nimport { describe, it, expect } from 'vitest'\nimport { {{HOOK_NAME}} } from '@/hooks/{{HOOK_PATH}}'\n\ndescribe('{{HOOK_NAME}}', () => {\n  it('should return initial state', () => {\n    const { result } = renderHook(() => {{HOOK_NAME}}())\n    \n    expect(result.current).toBeDefined()\n  })\n\n  it('should update state correctly', () => {\n    const { result } = renderHook(() => {{HOOK_NAME}}())\n    \n    act(() => {\n      result.current.updateValue('new value')\n    })\n    \n    expect(result.current.value).toBe('new value')\n  })\n\n  it('should handle async operations', async () => {\n    const { result } = renderHook(() => {{HOOK_NAME}}())\n    \n    act(() => {\n      result.current.fetchData()\n    })\n    \n    expect(result.current.loading).toBe(true)\n    \n    await waitFor(() => {\n      expect(result.current.loading).toBe(false)\n    })\n    \n    expect(result.current.data).toBeDefined()\n  })\n})\n",
+
+  "withContext": "import { renderHook } from '@testing-library/react'\nimport { describe, it, expect } from 'vitest'\nimport { {{HOOK_NAME}} } from '@/hooks/{{HOOK_PATH}}'\nimport { {{CONTEXT_NAME}}Provider } from '@/contexts/{{CONTEXT_PATH}}'\nimport { ReactNode } from 'react'\n\nconst wrapper = ({ children }: { children: ReactNode }) => (\n  <{{CONTEXT_NAME}}Provider>{children}</{{CONTEXT_NAME}}Provider>\n)\n\ndescribe('{{HOOK_NAME}}', () => {\n  it('should access context values', () => {\n    const { result } = renderHook(() => {{HOOK_NAME}}(), { wrapper })\n    \n    expect(result.current.contextValue).toBeDefined()\n  })\n})\n"
+}

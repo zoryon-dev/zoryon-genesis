@@ -1,0 +1,131 @@
+// {{componentName}} - Atom Component
+// Gerado por Zory-Component
+
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
+{{#if useIcon}}
+import { {{iconName}} } from "lucide-react"
+{{/if}}
+
+// =============================================================================
+// VARIANTS (CVA)
+// =============================================================================
+
+const {{camelName}}Variants = cva(
+  // Base styles
+  "{{baseStyles}}",
+  {
+    variants: {
+      variant: {
+        default: "{{variantDefault}}",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+      },
+      size: {
+        sm: "h-8 px-3 text-xs",
+        md: "h-10 px-4 text-sm",
+        lg: "h-12 px-6 text-base",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "md",
+    },
+  }
+)
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+export interface {{componentName}}Props
+  extends React.{{elementType}}HTMLAttributes<HTML{{elementType}}Element>,
+    VariantProps<typeof {{camelName}}Variants> {
+  {{#if hasChildren}}
+  children?: React.ReactNode
+  {{/if}}
+  {{#if hasIcon}}
+  icon?: React.ReactNode
+  iconPosition?: "left" | "right"
+  {{/if}}
+  {{#if hasLoading}}
+  isLoading?: boolean
+  {{/if}}
+  {{#if hasDisabled}}
+  disabled?: boolean
+  {{/if}}
+  {{#if asChild}}
+  asChild?: boolean
+  {{/if}}
+}
+
+// =============================================================================
+// COMPONENT
+// =============================================================================
+
+const {{componentName}} = React.forwardRef<HTML{{elementType}}Element, {{componentName}}Props>(
+  (
+    {
+      className,
+      variant,
+      size,
+      {{#if hasChildren}}
+      children,
+      {{/if}}
+      {{#if hasIcon}}
+      icon,
+      iconPosition = "left",
+      {{/if}}
+      {{#if hasLoading}}
+      isLoading = false,
+      {{/if}}
+      {{#if hasDisabled}}
+      disabled,
+      {{/if}}
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <{{element}}
+        ref={ref}
+        className={cn({{camelName}}Variants({ variant, size }), className)}
+        {{#if hasDisabled}}
+        disabled={disabled || isLoading}
+        {{/if}}
+        {...props}
+      >
+        {{#if hasLoading}}
+        {isLoading ? (
+          <span className="animate-spin mr-2">⏳</span>
+        ) : null}
+        {{/if}}
+        {{#if hasIcon}}
+        {icon && iconPosition === "left" && (
+          <span className="mr-2">{icon}</span>
+        )}
+        {{/if}}
+        {{#if hasChildren}}
+        {children}
+        {{/if}}
+        {{#if hasIcon}}
+        {icon && iconPosition === "right" && (
+          <span className="ml-2">{icon}</span>
+        )}
+        {{/if}}
+      </{{element}}>
+    )
+  }
+)
+
+{{componentName}}.displayName = "{{componentName}}"
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
+
+export { {{componentName}}, {{camelName}}Variants }

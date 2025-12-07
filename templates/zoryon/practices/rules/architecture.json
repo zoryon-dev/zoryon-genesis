@@ -1,0 +1,230 @@
+{
+  "id": "architecture",
+  "name": "Architecture Best Practices",
+  "description": "Verifica estrutura e organizacao do projeto",
+
+  "checks": [
+    {
+      "id": "folder-structure",
+      "name": "Estrutura de Pastas",
+      "description": "Verifica organizacao consistente de pastas",
+      "severity": "medium",
+      "recommended": {
+        "feature-based": {
+          "description": "Organizacao por feature/dominio",
+          "structure": {
+            "src/": {
+              "features/": "Modulos por dominio",
+              "shared/": "Codigo compartilhado",
+              "app/": "Routes (Next.js App Router)"
+            }
+          },
+          "featureStructure": {
+            "components/": "Componentes do feature",
+            "hooks/": "Hooks do feature",
+            "api/": "Chamadas de API",
+            "types/": "Tipos TypeScript",
+            "utils/": "Utilitarios",
+            "__tests__/": "Testes"
+          }
+        },
+        "atomic": {
+          "description": "Atomic Design para componentes",
+          "structure": {
+            "components/": {
+              "atoms/": "Elementos basicos",
+              "molecules/": "Grupos de atoms",
+              "organisms/": "Secoes complexas",
+              "templates/": "Layouts"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "circular-dependencies",
+      "name": "Dependencias Circulares",
+      "description": "Detecta imports circulares",
+      "severity": "high",
+      "patterns": {
+        "circularImport": {
+          "description": "A importa B que importa A"
+        }
+      },
+      "fix": "Extraia codigo compartilhado para modulo separado"
+    },
+    {
+      "id": "barrel-exports",
+      "name": "Barrel Exports",
+      "description": "Verifica uso de index.ts para exports",
+      "severity": "info",
+      "patterns": {
+        "missing": {
+          "description": "Pasta com multiplos exports sem index.ts"
+        },
+        "excessive": {
+          "description": "Re-export de tudo pode aumentar bundle"
+        }
+      },
+      "recommendation": "Use barrel exports com moderacao - pode impactar tree-shaking"
+    },
+    {
+      "id": "import-organization",
+      "name": "Organizacao de Imports",
+      "description": "Verifica ordem e organizacao de imports",
+      "severity": "low",
+      "recommended": {
+        "order": [
+          "1. React/Next.js",
+          "2. Bibliotecas externas",
+          "3. Componentes internos",
+          "4. Hooks",
+          "5. Utils/Helpers",
+          "6. Types",
+          "7. Styles/Assets"
+        ],
+        "absolute": "Prefira paths absolutos (@/components)",
+        "relative": "Use relativo apenas para arquivos proximos"
+      }
+    },
+    {
+      "id": "separation-of-concerns",
+      "name": "Separacao de Responsabilidades",
+      "description": "Verifica mistura de logica e apresentacao",
+      "severity": "medium",
+      "patterns": {
+        "apiInComponent": {
+          "regex": "(?:fetch|axios)[^;]*(?=.*return[^;]*<)",
+          "message": "API call direta em componente de apresentacao"
+        },
+        "businessLogicInUI": {
+          "description": "Logica de negocio misturada com UI"
+        }
+      },
+      "recommendations": [
+        "Use Server Components para data fetching",
+        "Extraia logica para custom hooks",
+        "Mantenha componentes focados em UI"
+      ]
+    },
+    {
+      "id": "colocation",
+      "name": "Colocacao de Arquivos",
+      "description": "Verifica se arquivos relacionados estao proximos",
+      "severity": "info",
+      "principles": [
+        "Testes junto aos arquivos testados",
+        "Types junto ao codigo que usa",
+        "Styles junto aos componentes (se CSS modules)"
+      ]
+    },
+    {
+      "id": "naming-conventions",
+      "name": "Convencoes de Nomenclatura",
+      "description": "Verifica consistencia de nomes",
+      "severity": "low",
+      "conventions": {
+        "components": {
+          "pattern": "PascalCase",
+          "example": "UserProfile.tsx"
+        },
+        "hooks": {
+          "pattern": "camelCase com prefixo 'use'",
+          "example": "useUserData.ts"
+        },
+        "utils": {
+          "pattern": "camelCase",
+          "example": "formatDate.ts"
+        },
+        "constants": {
+          "pattern": "UPPER_SNAKE_CASE",
+          "example": "API_ENDPOINTS.ts"
+        },
+        "types": {
+          "pattern": "PascalCase com sufixo",
+          "example": "UserType.ts ou User.types.ts"
+        }
+      }
+    },
+    {
+      "id": "module-boundaries",
+      "name": "Limites de Modulo",
+      "description": "Verifica respeito aos limites de modulos/features",
+      "severity": "medium",
+      "rules": [
+        "Features nao devem importar de outras features diretamente",
+        "Use shared/ para codigo comum",
+        "Defina interfaces publicas claras"
+      ]
+    },
+    {
+      "id": "env-management",
+      "name": "Gerenciamento de ENV",
+      "description": "Verifica uso correto de variaveis de ambiente",
+      "severity": "high",
+      "patterns": {
+        "hardcodedSecrets": {
+          "description": "Chaves/secrets hardcoded no codigo"
+        },
+        "envValidation": {
+          "recommendation": "Use Zod para validar env em runtime"
+        },
+        "envPrefix": {
+          "recommendation": "Use NEXT_PUBLIC_ apenas para variaveis do cliente"
+        }
+      },
+      "files": {
+        "required": [".env.example"],
+        "recommended": ["src/env.ts OR src/lib/env.ts"]
+      }
+    },
+    {
+      "id": "config-management",
+      "name": "Gerenciamento de Configuracao",
+      "description": "Verifica centralizacao de configuracoes",
+      "severity": "low",
+      "recommendations": [
+        "Centralize configs em arquivos dedicados",
+        "Use constantes ao inves de valores magicos",
+        "Agrupe configs relacionadas"
+      ]
+    }
+  ],
+
+  "projectTypes": {
+    "small": {
+      "description": "Projetos pequenos (< 20 componentes)",
+      "recommendation": "Layer-based simples (components/, hooks/, utils/)"
+    },
+    "medium": {
+      "description": "Projetos medios (20-100 componentes)",
+      "recommendation": "Feature-based com shared/"
+    },
+    "large": {
+      "description": "Projetos grandes (> 100 componentes)",
+      "recommendation": "Feature-Sliced Design ou Monorepo"
+    }
+  },
+
+  "nextjsSpecific": {
+    "appRouter": {
+      "structure": {
+        "app/": "Routes e layouts",
+        "app/api/": "API routes",
+        "app/(marketing)/": "Route groups",
+        "app/[slug]/": "Dynamic routes"
+      },
+      "specialFiles": [
+        "layout.tsx",
+        "page.tsx",
+        "loading.tsx",
+        "error.tsx",
+        "not-found.tsx"
+      ]
+    },
+    "serverVsClient": {
+      "server": "Default - data fetching, heavy computations",
+      "client": "'use client' - interatividade, hooks de estado"
+    }
+  }
+}

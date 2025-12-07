@@ -1,0 +1,36 @@
+{
+  "projeto": "{{PROJECT_NAME}}",
+  "criadoEm": "{{DATE}}",
+  "tarefas": [
+    {
+      "id": 1,
+      "titulo": "Configurar variáveis de ambiente",
+      "descricao": "Copie .env.example para .env e configure suas credenciais",
+      "status": "pendente",
+      "prioridade": "alta",
+      "dependencias": [],
+      "criadoEm": "{{DATE}}",
+      "concluidoEm": null
+    },
+    {
+      "id": 2,
+      "titulo": "Instalar dependências",
+      "descricao": "Execute pnpm install para instalar todas as dependências",
+      "status": "pendente",
+      "prioridade": "alta",
+      "dependencias": [],
+      "criadoEm": "{{DATE}}",
+      "concluidoEm": null
+    },
+    {
+      "id": 3,
+      "titulo": "Testar ambiente de desenvolvimento",
+      "descricao": "Execute pnpm dev e acesse http://localhost:3000",
+      "status": "pendente",
+      "prioridade": "alta",
+      "dependencias": [1, 2],
+      "criadoEm": "{{DATE}}",
+      "concluidoEm": null
+    }
+  ]
+}

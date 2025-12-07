@@ -1,0 +1,120 @@
+{
+  "pattern": "ratelimit",
+  "name": "Rate Limiting Middleware",
+  "description": "Limita número de requisições por IP ou usuário",
+
+  "algorithms": {
+    "fixedWindow": {
+      "name": "Fixed Window",
+      "description": "Limite fixo por janela de tempo",
+      "example": "10 requests per 10 seconds",
+      "pros": ["Simples", "Previsível"],
+      "cons": ["Burst no início da janela"]
+    },
+    "slidingWindow": {
+      "name": "Sliding Window",
+      "description": "Janela deslizante mais precisa",
+      "example": "10 requests per 10 seconds (smooth)",
+      "pros": ["Mais preciso", "Evita bursts"],
+      "cons": ["Mais complexo"],
+      "recommended": true
+    },
+    "tokenBucket": {
+      "name": "Token Bucket",
+      "description": "Permite bursts controlados",
+      "example": "Bucket de 20 tokens, recarrega 1/segundo",
+      "pros": ["Permite bursts", "Flexível"],
+      "cons": ["Mais complexo de configurar"]
+    }
+  },
+
+  "providers": {
+    "upstash": {
+      "name": "Upstash Redis",
+      "description": "Redis serverless otimizado para Edge",
+      "pricing": "Freemium (10k commands/day grátis)",
+      "edge": true,
+      "setup": {
+        "install": "@upstash/ratelimit @upstash/redis",
+        "env": ["UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"]
+      },
+      "recommended": true
+    },
+    "vercel-kv": {
+      "name": "Vercel KV",
+      "description": "KV storage da Vercel (baseado em Upstash)",
+      "pricing": "Pago (incluído em Pro plan)",
+      "edge": true,
+      "setup": {
+        "install": "@vercel/kv",
+        "env": ["KV_REST_API_URL", "KV_REST_API_TOKEN"]
+      }
+    },
+    "memory": {
+      "name": "In-Memory",
+      "description": "Cache local (não recomendado para produção)",
+      "pricing": "Grátis",
+      "edge": false,
+      "warning": "Não compartilhado entre instâncias"
+    }
+  },
+
+  "templates": {
+    "upstash": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\nimport { Ratelimit } from '@upstash/ratelimit'\nimport { Redis } from '@upstash/redis'\n\n// Configure rate limiter\nconst ratelimit = new Ratelimit({\n  redis: Redis.fromEnv(),\n  limiter: Ratelimit.slidingWindow(10, '10 s'),\n  analytics: true,\n  prefix: '@upstash/ratelimit',\n})\n\nexport async function rateLimitMiddleware(request: NextRequest) {\n  // Get IP (handle proxies)\n  const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? '127.0.0.1'\n  \n  const { success, limit, reset, remaining } = await ratelimit.limit(\n    `ratelimit_${ip}`\n  )\n  \n  // Add rate limit headers\n  const response = success\n    ? NextResponse.next()\n    : NextResponse.json(\n        { error: 'Too Many Requests' },\n        { status: 429 }\n      )\n  \n  response.headers.set('X-RateLimit-Limit', limit.toString())\n  response.headers.set('X-RateLimit-Remaining', remaining.toString())\n  response.headers.set('X-RateLimit-Reset', reset.toString())\n  \n  return response\n}",
+
+    "per-user": "import { auth } from '@/auth'\nimport { Ratelimit } from '@upstash/ratelimit'\nimport { Redis } from '@upstash/redis'\n\n// Different limits for different user types\nconst anonymousLimiter = new Ratelimit({\n  redis: Redis.fromEnv(),\n  limiter: Ratelimit.slidingWindow(5, '10 s'),\n})\n\nconst userLimiter = new Ratelimit({\n  redis: Redis.fromEnv(),\n  limiter: Ratelimit.slidingWindow(20, '10 s'),\n})\n\nconst premiumLimiter = new Ratelimit({\n  redis: Redis.fromEnv(),\n  limiter: Ratelimit.slidingWindow(100, '10 s'),\n})\n\nexport async function perUserRateLimit(request: NextRequest) {\n  const session = await auth()\n  \n  let identifier: string\n  let limiter: Ratelimit\n  \n  if (!session) {\n    identifier = request.ip ?? '127.0.0.1'\n    limiter = anonymousLimiter\n  } else if (session.user.plan === 'premium') {\n    identifier = session.user.id\n    limiter = premiumLimiter\n  } else {\n    identifier = session.user.id\n    limiter = userLimiter\n  }\n  \n  const { success } = await limiter.limit(identifier)\n  \n  if (!success) {\n    return NextResponse.json(\n      { error: 'Rate limit exceeded' },\n      { status: 429 }\n    )\n  }\n  \n  return NextResponse.next()\n}",
+
+    "per-endpoint": "import { Ratelimit } from '@upstash/ratelimit'\nimport { Redis } from '@upstash/redis'\n\n// Different limits por endpoint\nconst endpointLimits = {\n  '/api/auth': new Ratelimit({\n    redis: Redis.fromEnv(),\n    limiter: Ratelimit.slidingWindow(5, '1 m'), // Mais restritivo\n  }),\n  '/api/search': new Ratelimit({\n    redis: Redis.fromEnv(),\n    limiter: Ratelimit.slidingWindow(30, '1 m'),\n  }),\n  '/api/*': new Ratelimit({\n    redis: Redis.fromEnv(),\n    limiter: Ratelimit.slidingWindow(60, '1 m'), // Default\n  }),\n}\n\nexport async function endpointRateLimit(request: NextRequest) {\n  const path = request.nextUrl.pathname\n  const ip = request.ip ?? '127.0.0.1'\n  \n  // Find matching limiter\n  let limiter = endpointLimits['/api/*'] // default\n  \n  for (const [pattern, rl] of Object.entries(endpointLimits)) {\n    if (path.startsWith(pattern.replace('*', ''))) {\n      limiter = rl\n      break\n    }\n  }\n  \n  const { success } = await limiter.limit(`${path}_${ip}`)\n  \n  if (!success) {\n    return NextResponse.json(\n      { error: 'Rate limit exceeded for this endpoint' },\n      { status: 429 }\n    )\n  }\n  \n  return NextResponse.next()\n}"
+  },
+
+  "configuration": {
+    "limits": {
+      "anonymous": "5-10 requests/10s",
+      "authenticated": "20-50 requests/10s",
+      "premium": "100-200 requests/10s",
+      "api": "60 requests/minute",
+      "auth": "5 requests/minute (login/signup)"
+    },
+    "windows": {
+      "short": "10s - Previne spam imediato",
+      "medium": "1m - Balance entre UX e proteção",
+      "long": "1h - Limite diário dividido"
+    }
+  },
+
+  "responseHeaders": [
+    "X-RateLimit-Limit: Limite total",
+    "X-RateLimit-Remaining: Requisições restantes",
+    "X-RateLimit-Reset: Timestamp do reset (Unix epoch)"
+  ],
+
+  "errorResponses": {
+    "429": {
+      "status": 429,
+      "body": {
+        "error": "Too Many Requests",
+        "message": "Rate limit exceeded. Try again later.",
+        "retryAfter": "Reset timestamp"
+      },
+      "headers": {
+        "Retry-After": "Seconds until reset"
+      }
+    }
+  },
+
+  "monitoring": [
+    "Track 429 responses",
+    "Monitor rate limit hits per IP/user",
+    "Alert on unusual patterns",
+    "Dashboard para análise de tráfego"
+  ],
+
+  "bypass": {
+    "description": "Como permitir bypass do rate limit",
+    "methods": [
+      "Whitelist de IPs (admin, monitoring)",
+      "API keys especiais",
+      "Feature flags"
+    ]
+  }
+}

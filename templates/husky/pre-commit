@@ -1,0 +1,29 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Verificando código antes do commit..."
+
+# Lint
+echo "📝 Executando lint..."
+pnpm lint || {
+  echo "❌ Lint falhou. Corrija os erros antes de fazer commit."
+  echo "   Dica: execute 'pnpm lint --fix' para corrigir automaticamente."
+  exit 1
+}
+
+# Typecheck
+echo "📘 Verificando tipos..."
+pnpm typecheck || {
+  echo "❌ Typecheck falhou. Corrija os erros de tipo."
+  exit 1
+}
+
+# Security scan
+echo "🔒 Verificando segurança..."
+node .zoryon/security/scan.mjs || {
+  echo "❌ Problemas de segurança encontrados."
+  echo "   Corrija antes de fazer commit."
+  exit 1
+}
+
+echo "✅ Tudo certo! Continuando com o commit..."

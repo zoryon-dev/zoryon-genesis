@@ -1,0 +1,40 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Validar formato da mensagem de commit
+# Aceita: tipo: mensagem ou tipo(escopo): mensagem
+
+message=$(cat "$1")
+
+# Regex para validar formato
+pattern="^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,}"
+
+if ! echo "$message" | grep -qE "$pattern"; then
+  echo ""
+  echo "❌ Mensagem de commit inválida!"
+  echo ""
+  echo "   Formato: tipo: descrição"
+  echo "   Ou:      tipo(escopo): descrição"
+  echo ""
+  echo "   Tipos válidos:"
+  echo "     feat     - Nova funcionalidade"
+  echo "     fix      - Correção de bug"
+  echo "     docs     - Documentação"
+  echo "     style    - Formatação (não altera código)"
+  echo "     refactor - Refatoração"
+  echo "     test     - Testes"
+  echo "     chore    - Manutenção"
+  echo "     perf     - Performance"
+  echo "     ci       - CI/CD"
+  echo "     build    - Build"
+  echo "     revert   - Reverter commit"
+  echo ""
+  echo "   Exemplos:"
+  echo "     feat: adicionar login com Clerk"
+  echo "     fix(auth): corrigir validação de token"
+  echo "     docs: atualizar README"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Mensagem de commit válida!"

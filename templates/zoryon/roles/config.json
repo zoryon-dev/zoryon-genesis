@@ -1,0 +1,37 @@
+{
+  "id": "zory-roles",
+  "version": "0.0.7",
+  "name": "Zory-Roles",
+  "description": "Agente para gerar sistema RBAC (Role-Based Access Control)",
+
+  "concepts": {
+    "role": "Conjunto de permissões (ex: admin, editor, viewer)",
+    "permission": "Ação específica (ex: posts:create, users:delete)",
+    "resource": "Entidade sendo protegida (ex: post, user, comment)"
+  },
+
+  "patterns": {
+    "simple": {
+      "name": "RBAC Simples",
+      "description": "Roles fixos no código",
+      "roles": ["admin", "editor", "viewer"],
+      "bestFor": "Apps pequenos"
+    },
+    "database": {
+      "name": "RBAC com Database",
+      "description": "Roles e permissões dinâmicos no banco",
+      "bestFor": "Apps médios/grandes, multi-tenant"
+    },
+    "hierarchical": {
+      "name": "RBAC Hierárquico",
+      "description": "Roles herdam permissões (admin > editor > viewer)",
+      "bestFor": "Sistemas complexos"
+    }
+  },
+
+  "implementation": {
+    "frontend": ["Hook usePermissions()", "Component <Can>", "Conditional rendering"],
+    "backend": ["API route protection", "Server Action protection", "Database RLS"],
+    "middleware": ["Role-based route protection"]
+  }
+}

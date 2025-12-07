@@ -1,0 +1,114 @@
+{
+  "id": "zory-guard",
+  "version": "0.0.6",
+  "name": "Zory-Guard",
+  "description": "Agente para gerar middlewares de proteção em Next.js",
+
+  "patterns": {
+    "auth": {
+      "name": "Authentication Middleware",
+      "description": "Valida autenticação e protege rotas",
+      "use_cases": ["Protected routes", "Session validation", "Token verification"],
+      "dependencies": ["next-auth", "@clerk/nextjs"],
+      "file": "guard/patterns/auth.json"
+    },
+    "ratelimit": {
+      "name": "Rate Limiting",
+      "description": "Limita requisições por IP/usuário",
+      "use_cases": ["API protection", "DDoS prevention", "Abuse prevention"],
+      "dependencies": ["@upstash/ratelimit", "@upstash/redis"],
+      "file": "guard/patterns/ratelimit.json"
+    },
+    "security": {
+      "name": "Security Headers",
+      "description": "Adiciona headers de segurança (CSP, CORS, etc.)",
+      "use_cases": ["XSS protection", "CORS", "CSP", "HSTS"],
+      "dependencies": [],
+      "file": "guard/patterns/security.json"
+    },
+    "apikey": {
+      "name": "API Key Validation",
+      "description": "Valida API keys em requisições",
+      "use_cases": ["Public API", "Third-party integrations", "Webhook validation"],
+      "dependencies": [],
+      "file": "guard/patterns/apikey.json"
+    },
+    "ipfilter": {
+      "name": "IP Filtering",
+      "description": "Bloqueia ou permite IPs específicos",
+      "use_cases": ["Admin routes", "Geographic restrictions", "Bot blocking"],
+      "dependencies": [],
+      "file": "guard/patterns/ipfilter.json"
+    },
+    "roles": {
+      "name": "Role-Based Protection",
+      "description": "Protege rotas baseado em roles/permissões",
+      "use_cases": ["Admin panel", "Multi-tenant", "Feature access"],
+      "dependencies": [],
+      "file": "guard/patterns/roles.json"
+    }
+  },
+
+  "middleware": {
+    "file": "middleware.ts",
+    "location": "root",
+    "edgeRuntime": true,
+    "matcher": {
+      "default": "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+      "api": "/(api|trpc)(.*)",
+      "all": ["/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)", "/(api|trpc)(.*)"]
+    }
+  },
+
+  "chaining": {
+    "description": "Como combinar múltiplos middleware patterns",
+    "strategies": {
+      "sequential": "Executa middlewares em ordem (security -> auth -> rate limit)",
+      "conditional": "Aplica middlewares baseado em rota/condição",
+      "composed": "Combina múltiplos patterns em função única"
+    },
+    "recommended": "sequential"
+  },
+
+  "performance": {
+    "edgeRuntime": {
+      "description": "Middleware roda no Edge (mais rápido)",
+      "limitations": [
+        "Sem Node.js APIs",
+        "Sem filesystem",
+        "Sem process.env direto",
+        "Código limitado a 1MB"
+      ]
+    },
+    "caching": {
+      "description": "Cache resultados para melhor performance",
+      "strategies": ["In-memory cache", "Redis cache", "Edge cache"]
+    },
+    "coldStart": {
+      "description": "Otimize para cold starts",
+      "tips": [
+        "Minimize dependências",
+        "Use lazy loading",
+        "Evite I/O no middleware quando possível"
+      ]
+    }
+  },
+
+  "testing": {
+    "unit": "Teste cada pattern isoladamente",
+    "integration": "Teste chaining de patterns",
+    "e2e": "Teste fluxos completos com Playwright",
+    "tools": ["vitest", "playwright", "@testing-library/react"]
+  },
+
+  "bestPractices": [
+    "Sempre retorne Response ou NextResponse",
+    "Use matcher para evitar processamento desnecessário",
+    "Implemente logging para debug",
+    "Cache quando possível",
+    "Falhe de forma segura (deny by default)",
+    "Teste edge cases",
+    "Monitore performance",
+    "Use feature flags para rollout gradual"
+  ]
+}

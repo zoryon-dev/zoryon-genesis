@@ -1,0 +1,46 @@
+{
+  "pattern": "git-hooks",
+  "name": "Git Hooks com Husky",
+  "description": "Hooks Git para garantir qualidade e segurança do código",
+
+  "installation": {
+    "packages": ["husky"],
+    "devDependencies": true
+  },
+
+  "setup": {
+    "initCommand": "npx husky init",
+    "directory": ".husky"
+  },
+
+  "hooks": {
+    "pre-commit": {
+      "description": "Executa lint, typecheck e scan de segurança antes do commit",
+      "script": "#!/usr/bin/env sh\n. \"$(dirname -- \"$0\")/_/husky.sh\"\n\necho \"🔍 Verificando código antes do commit...\\n\"\n\n# Executar lint\necho \"📝 Lint...\"\npnpm lint || {\n  echo \"\\n❌ Erro no lint. Corrija os erros antes de commitar.\"\n  exit 1\n}\n\n# Executar typecheck\necho \"\\n🔷 TypeScript...\"\npnpm typecheck || {\n  echo \"\\n❌ Erro no typecheck. Corrija os erros de tipo antes de commitar.\"\n  exit 1\n}\n\n# Executar scan de segurança\nif [ -f \".zoryon/security/scan.mjs\" ]; then\n  echo \"\\n🔒 Segurança...\"\n  node .zoryon/security/scan.mjs || {\n    echo \"\\n❌ Problemas de segurança detectados. Remova secrets antes de commitar.\"\n    exit 1\n  }\nfi\n\necho \"\\n✅ Tudo certo! Prosseguindo com o commit...\\n\"\n"
+    },
+
+    "commit-msg": {
+      "description": "Valida o formato da mensagem de commit (Conventional Commits)",
+      "script": "#!/usr/bin/env sh\n. \"$(dirname -- \"$0\")/_/husky.sh\"\n\n# Ler mensagem do commit\ncommit_msg=$(cat \"$1\")\n\n# Padrão: tipo(escopo opcional): mensagem\n# Tipos válidos: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert\npattern=\"^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\\(.+\\))?: .{1,}\"\n\nif ! echo \"$commit_msg\" | grep -qE \"$pattern\"; then\n  echo \"❌ Formato de commit inválido!\\n\"\n  echo \"Use o formato: tipo(escopo): mensagem\\n\"\n  echo \"Exemplos:\"\n  echo \"  feat: adicionar autenticação com Clerk\"\n  echo \"  fix(api): corrigir erro no endpoint de usuários\"\n  echo \"  docs: atualizar README\\n\"\n  echo \"Tipos válidos:\"\n  echo \"  feat     - Nova funcionalidade\"\n  echo \"  fix      - Correção de bug\"\n  echo \"  docs     - Documentação\"\n  echo \"  style    - Formatação, ponto e vírgula, etc\"\n  echo \"  refactor - Refatoração de código\"\n  echo \"  test     - Adicionar/modificar testes\"\n  echo \"  chore    - Tarefas de manutenção\"\n  echo \"  perf     - Melhorias de performance\"\n  echo \"  ci       - Mudanças em CI/CD\"\n  echo \"  build    - Mudanças no build\"\n  echo \"  revert   - Reverter commit anterior\\n\"\n  exit 1\nfi\n"
+    },
+
+    "pre-push": {
+      "description": "Executa testes antes do push (se existirem)",
+      "script": "#!/usr/bin/env sh\n. \"$(dirname -- \"$0\")/_/husky.sh\"\n\necho \"🧪 Verificando testes antes do push...\\n\"\n\n# Verificar se há testes configurados\nif grep -q '\"test\"' package.json; then\n  echo \"Executando testes...\"\n  pnpm test || {\n    echo \"\\n❌ Testes falharam. Corrija antes de fazer push.\"\n    exit 1\n  }\n  echo \"\\n✅ Todos os testes passaram!\\n\"\nelse\n  echo \"ℹ️  Nenhum teste configurado. Pulando verificação.\\n\"\nfi\n"
+    }
+  },
+
+  "packageJsonScripts": {
+    "prepare": "husky install"
+  },
+
+  "examples": {
+    "skipHook": "git commit --no-verify -m 'mensagem'",
+    "testHook": "sh .husky/pre-commit"
+  },
+
+  "documentation": {
+    "url": "https://typicode.github.io/husky/",
+    "commitConventions": "https://www.conventionalcommits.org/"
+  }
+}

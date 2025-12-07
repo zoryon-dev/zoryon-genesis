@@ -1,0 +1,9 @@
+{
+  "type": "integration",
+  "pattern": "page",
+  "description": "Template para teste de página Next.js",
+
+  "template": "import { render, screen, waitFor } from '@testing-library/react'\nimport { describe, it, expect, vi } from 'vitest'\nimport Page from '@/app/{{PAGE_PATH}}/page'\n\n// Mock Next.js modules\nvi.mock('next/navigation', () => ({\n  useRouter: () => ({\n    push: vi.fn(),\n    pathname: '/{{PAGE_PATH}}',\n  }),\n  useSearchParams: () => ({\n    get: vi.fn(),\n  }),\n}))\n\ndescribe('{{PAGE_NAME}} Page', () => {\n  it('should render page content', () => {\n    render(<Page />)\n    \n    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()\n  })\n\n  it('should load and display data', async () => {\n    render(<Page />)\n    \n    await waitFor(() => {\n      expect(screen.queryByText(/loading/i)).not.toBeInTheDocument()\n    })\n    \n    expect(screen.getByText(/content/i)).toBeInTheDocument()\n  })\n\n  it('should handle navigation', async () => {\n    const { useRouter } = await import('next/navigation')\n    const router = useRouter()\n    \n    render(<Page />)\n    \n    // Simulate navigation action\n    // Example: click button that triggers navigation\n    \n    expect(router.push).toHaveBeenCalled()\n  })\n})\n",
+
+  "withServerComponent": "import { render, screen } from '@testing-library/react'\nimport { describe, it, expect, vi } from 'vitest'\nimport Page from '@/app/{{PAGE_PATH}}/page'\n\n// Mock data fetching\nconst mockData = {\n  // Add mock data structure\n}\n\ndescribe('{{PAGE_NAME}} Page (Server Component)', () => {\n  it('should render with fetched data', async () => {\n    // Server Components são renderizados no servidor\n    // Teste o output esperado\n    render(<Page />)\n    \n    expect(screen.getByRole('heading')).toHaveTextContent('Expected Title')\n  })\n})\n"
+}

@@ -1,0 +1,99 @@
+{
+  "name": "Regras de Detecção de Vulnerabilidades",
+  "version": "1.0.0",
+  "description": "Padrões para detectar vulnerabilidades comuns no código",
+  "rules": [
+    {
+      "id": "sql-injection",
+      "name": "SQL Injection",
+      "pattern": "\\$\\{.*\\}.*(?:SELECT|INSERT|UPDATE|DELETE|DROP)",
+      "severity": "critical",
+      "message": "Possível SQL injection. Use queries parametrizadas.",
+      "fix": "Use prisma ou prepared statements",
+      "example": {
+        "bad": "db.query(`SELECT * FROM users WHERE id = ${userId}`)",
+        "good": "prisma.user.findUnique({ where: { id: userId } })"
+      }
+    },
+    {
+      "id": "xss-innerhtml",
+      "name": "XSS via innerHTML",
+      "pattern": "innerHTML\\s*=",
+      "severity": "high",
+      "message": "Uso de innerHTML pode causar XSS. Use textContent ou React.",
+      "fix": "Use React ou sanitize o conteúdo",
+      "example": {
+        "bad": "element.innerHTML = userInput",
+        "good": "element.textContent = userInput"
+      }
+    },
+    {
+      "id": "xss-dangerously",
+      "name": "XSS via dangerouslySetInnerHTML",
+      "pattern": "dangerouslySetInnerHTML",
+      "severity": "medium",
+      "message": "dangerouslySetInnerHTML pode causar XSS. Sanitize o conteúdo.",
+      "fix": "Use DOMPurify ou similar para sanitizar",
+      "example": {
+        "bad": "<div dangerouslySetInnerHTML={{ __html: userInput }} />",
+        "good": "<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />"
+      }
+    },
+    {
+      "id": "eval-usage",
+      "name": "Uso de eval",
+      "pattern": "\\beval\\s*\\(",
+      "severity": "critical",
+      "message": "Uso de eval é perigoso. Evite completamente.",
+      "fix": "Refatore para não usar eval",
+      "example": {
+        "bad": "eval(userCode)",
+        "good": "JSON.parse(userJSON)"
+      }
+    },
+    {
+      "id": "command-injection",
+      "name": "Command Injection",
+      "pattern": "(exec|spawn|execSync)\\s*\\(.*\\$\\{",
+      "severity": "critical",
+      "message": "Possível command injection. Sanitize inputs.",
+      "fix": "Use argumentos em array, não string",
+      "example": {
+        "bad": "exec(`ls ${userPath}`)",
+        "good": "spawn('ls', [sanitizedPath])"
+      }
+    },
+    {
+      "id": "prototype-pollution",
+      "name": "Prototype Pollution",
+      "pattern": "\\[.*\\]\\s*=.*\\[.*\\]",
+      "severity": "medium",
+      "message": "Possível prototype pollution. Valide as chaves.",
+      "fix": "Use Object.hasOwn() para validar chaves"
+    },
+    {
+      "id": "path-traversal",
+      "name": "Path Traversal",
+      "pattern": "(readFile|writeFile|appendFile).*\\.\\.\\/",
+      "severity": "high",
+      "message": "Possível path traversal. Valide o caminho.",
+      "fix": "Use path.resolve e valide o caminho base"
+    },
+    {
+      "id": "insecure-redirect",
+      "name": "Open Redirect",
+      "pattern": "redirect\\s*\\(.*\\$\\{",
+      "severity": "medium",
+      "message": "Possível open redirect. Valide a URL de destino.",
+      "fix": "Use uma whitelist de URLs permitidas"
+    },
+    {
+      "id": "console-log-sensitive",
+      "name": "Console Log Sensível",
+      "pattern": "console\\.log\\(.*(password|token|secret|key)",
+      "severity": "medium",
+      "message": "Possível log de dados sensíveis. Remova antes de produção.",
+      "fix": "Remova logs de dados sensíveis"
+    }
+  ]
+}

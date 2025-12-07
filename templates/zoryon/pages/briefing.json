@@ -1,0 +1,131 @@
+{
+  "name": "Zory-Pages Briefing",
+  "version": "1.0.0",
+  "description": "Sistema de briefing para geração de landing pages",
+
+  "steps": [
+    {
+      "id": "objetivo",
+      "question": "Qual o objetivo principal da landing page?",
+      "type": "select",
+      "options": [
+        { "value": "lead-gen", "label": "Capturar leads (emails, contatos)" },
+        { "value": "product", "label": "Apresentar produto/serviço" },
+        { "value": "saas-trial", "label": "Converter para trial/signup (SaaS)" },
+        { "value": "app-download", "label": "Download de aplicativo" },
+        { "value": "event", "label": "Inscrição em evento/webinar" },
+        { "value": "community", "label": "Entrada em comunidade" },
+        { "value": "ecommerce", "label": "Venda direta (e-commerce)" }
+      ]
+    },
+    {
+      "id": "industria",
+      "question": "Qual a indústria/nicho do projeto?",
+      "type": "select",
+      "options": [
+        { "value": "saas", "label": "SaaS / Software" },
+        { "value": "fintech", "label": "Fintech / Finanças" },
+        { "value": "ecommerce", "label": "E-commerce / Varejo" },
+        { "value": "healthcare", "label": "Saúde / Healthcare" },
+        { "value": "education", "label": "Educação / Cursos" },
+        { "value": "travel", "label": "Viagem / Turismo" },
+        { "value": "agency", "label": "Agência / Serviços" },
+        { "value": "startup", "label": "Startup / Tech" },
+        { "value": "ai", "label": "Inteligência Artificial" },
+        { "value": "other", "label": "Outro" }
+      ]
+    },
+    {
+      "id": "estilo",
+      "question": "Qual estilo visual você prefere?",
+      "type": "select",
+      "options": [
+        { "value": "minimalism", "label": "Minimalismo - Clean, muito espaço branco" },
+        { "value": "glassmorphism", "label": "Glassmorphism - Efeito vidro fosco, moderno" },
+        { "value": "neumorphism", "label": "Neumorphism - Soft UI, 3D sutil" },
+        { "value": "brutalism", "label": "Brutalism - Bold, raw, impactante" },
+        { "value": "material", "label": "Material Design - Cards, sombras, estruturado" },
+        { "value": "gradient", "label": "Gradient - Cores vibrantes, gradientes" },
+        { "value": "dark", "label": "Dark Mode - Fundo escuro, elegante" }
+      ]
+    },
+    {
+      "id": "cores",
+      "question": "Qual a cor principal da marca?",
+      "type": "select",
+      "options": [
+        { "value": "blue", "label": "Azul - Confiança, profissionalismo", "hex": "#3B82F6" },
+        { "value": "purple", "label": "Roxo - Inovação, criatividade", "hex": "#8B5CF6" },
+        { "value": "green", "label": "Verde - Crescimento, natureza", "hex": "#22C55E" },
+        { "value": "orange", "label": "Laranja - Energia, ação", "hex": "#F97316" },
+        { "value": "red", "label": "Vermelho - Urgência, paixão", "hex": "#EF4444" },
+        { "value": "teal", "label": "Teal - Moderno, tech", "hex": "#14B8A6" },
+        { "value": "pink", "label": "Rosa - Criativo, jovem", "hex": "#EC4899" },
+        { "value": "custom", "label": "Personalizado (informar hex)" }
+      ]
+    },
+    {
+      "id": "publico",
+      "question": "Quem é o público-alvo principal?",
+      "type": "text",
+      "placeholder": "Ex: Desenvolvedores, Empreendedores, Gestores de marketing..."
+    },
+    {
+      "id": "proposta",
+      "question": "Qual a proposta de valor principal? (1 frase)",
+      "type": "text",
+      "placeholder": "Ex: Automatize seu marketing e economize 10h por semana"
+    },
+    {
+      "id": "cta",
+      "question": "Qual o texto do CTA principal?",
+      "type": "text",
+      "placeholder": "Ex: Começar Grátis, Agendar Demo, Baixar Agora..."
+    },
+    {
+      "id": "secoes",
+      "question": "Quais seções a landing page deve ter?",
+      "type": "multiselect",
+      "options": [
+        { "value": "hero", "label": "Hero Section (obrigatório)", "required": true },
+        { "value": "features", "label": "Features / Benefícios" },
+        { "value": "how-it-works", "label": "Como Funciona" },
+        { "value": "pricing", "label": "Preços / Planos" },
+        { "value": "testimonials", "label": "Depoimentos / Social Proof" },
+        { "value": "faq", "label": "FAQ / Perguntas Frequentes" },
+        { "value": "cta-final", "label": "CTA Final" },
+        { "value": "logos", "label": "Logos de Clientes" },
+        { "value": "stats", "label": "Estatísticas / Números" },
+        { "value": "comparison", "label": "Comparação / Antes-Depois" },
+        { "value": "video", "label": "Vídeo Demonstrativo" },
+        { "value": "form", "label": "Formulário de Captura" }
+      ]
+    },
+    {
+      "id": "animacoes",
+      "question": "Deseja animações e efeitos especiais?",
+      "type": "select",
+      "options": [
+        { "value": "none", "label": "Nenhuma - Estático, rápido" },
+        { "value": "subtle", "label": "Sutis - Fade in, hover suaves" },
+        { "value": "moderate", "label": "Moderadas - Scroll animations, transições" },
+        { "value": "rich", "label": "Ricas - MagicUI, Framer Motion, efeitos" }
+      ]
+    },
+    {
+      "id": "referencias",
+      "question": "Tem alguma referência visual? (URLs ou descrição)",
+      "type": "text",
+      "placeholder": "Ex: stripe.com, linear.app, ou 'estilo Apple'"
+    }
+  ],
+
+  "defaults": {
+    "objetivo": "saas-trial",
+    "industria": "saas",
+    "estilo": "minimalism",
+    "cores": "blue",
+    "animacoes": "moderate",
+    "secoes": ["hero", "features", "testimonials", "pricing", "cta-final"]
+  }
+}

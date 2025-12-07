@@ -1,0 +1,11 @@
+# Pages Output Directory
+
+Este diretório é usado pelo agente zory-pages para gerar páginas temporárias.
+
+Propósito:
+- Armazenamento temporário de páginas geradas
+- Output do gerador antes de copiar para o projeto
+- Preview de páginas antes da instalação
+
+⚠️ IMPORTANTE: Este diretório é usado dinamicamente pelo zory-pages.mjs
+Não coloque arquivos aqui manualmente - eles serão sobrescritos.

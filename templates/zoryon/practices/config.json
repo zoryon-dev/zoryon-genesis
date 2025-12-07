@@ -1,0 +1,152 @@
+{
+  "id": "zory-practices",
+  "name": "Zory-Practices",
+  "version": "0.0.4",
+  "description": "Agente de analise de boas praticas para React/TypeScript",
+
+  "modes": {
+    "analyze": {
+      "name": "Analise Completa",
+      "description": "Analisa todas as categorias de boas praticas",
+      "checks": ["all"]
+    },
+    "quick": {
+      "name": "Analise Rapida",
+      "description": "Verifica apenas problemas criticos",
+      "checks": ["code-quality", "typescript", "react-patterns"]
+    },
+    "typescript": {
+      "name": "TypeScript",
+      "description": "Foca em problemas de tipagem",
+      "checks": ["typescript"]
+    },
+    "react": {
+      "name": "React Patterns",
+      "description": "Verifica padroes React e hooks",
+      "checks": ["react-patterns", "performance"]
+    },
+    "a11y": {
+      "name": "Acessibilidade",
+      "description": "Verifica problemas de acessibilidade",
+      "checks": ["accessibility"]
+    },
+    "report": {
+      "name": "Gerar Relatorio",
+      "description": "Gera relatorio completo em MD ou JSON",
+      "checks": ["all"]
+    }
+  },
+
+  "categories": {
+    "code-quality": {
+      "id": "BP-01",
+      "name": "Qualidade de Codigo",
+      "description": "DRY, dead code, organizacao",
+      "weight": 3
+    },
+    "typescript": {
+      "id": "BP-02",
+      "name": "TypeScript",
+      "description": "Tipagem, strict mode, any usage",
+      "weight": 3
+    },
+    "react-patterns": {
+      "id": "BP-03",
+      "name": "Padroes React",
+      "description": "Hooks, componentes, estado",
+      "weight": 3
+    },
+    "performance": {
+      "id": "BP-04",
+      "name": "Performance",
+      "description": "Memoizacao, re-renders, otimizacao",
+      "weight": 2
+    },
+    "accessibility": {
+      "id": "BP-05",
+      "name": "Acessibilidade",
+      "description": "WCAG 2.2, ARIA, semantica",
+      "weight": 2
+    },
+    "testing": {
+      "id": "BP-06",
+      "name": "Testes",
+      "description": "Cobertura, estrategia, qualidade",
+      "weight": 2
+    },
+    "error-handling": {
+      "id": "BP-07",
+      "name": "Tratamento de Erros",
+      "description": "Error boundaries, try-catch, feedback",
+      "weight": 2
+    },
+    "architecture": {
+      "id": "BP-08",
+      "name": "Arquitetura",
+      "description": "Estrutura de pastas, separacao de responsabilidades",
+      "weight": 2
+    }
+  },
+
+  "severity": {
+    "critical": {
+      "icon": "🔴",
+      "description": "Problema critico - corrigir imediatamente",
+      "score": 10
+    },
+    "high": {
+      "icon": "🟠",
+      "description": "Problema alto - corrigir em breve",
+      "score": 7
+    },
+    "medium": {
+      "icon": "🟡",
+      "description": "Problema medio - planejar correcao",
+      "score": 4
+    },
+    "low": {
+      "icon": "🟢",
+      "description": "Problema baixo - melhorar quando possivel",
+      "score": 2
+    },
+    "info": {
+      "icon": "🔵",
+      "description": "Informativo - recomendacao",
+      "score": 1
+    }
+  },
+
+  "thresholds": {
+    "excellent": { "min": 90, "label": "Excelente", "emoji": "🏆" },
+    "good": { "min": 75, "label": "Bom", "emoji": "✅" },
+    "moderate": { "min": 50, "label": "Moderado", "emoji": "⚠️" },
+    "poor": { "min": 0, "label": "Precisa Melhorar", "emoji": "❌" }
+  },
+
+  "scanPaths": {
+    "include": [
+      "src/**/*.{ts,tsx,js,jsx}",
+      "app/**/*.{ts,tsx,js,jsx}",
+      "components/**/*.{ts,tsx,js,jsx}",
+      "lib/**/*.{ts,tsx,js,jsx}",
+      "hooks/**/*.{ts,tsx,js,jsx}",
+      "utils/**/*.{ts,tsx,js,jsx}"
+    ],
+    "exclude": [
+      "node_modules/**",
+      ".next/**",
+      "dist/**",
+      "build/**",
+      "coverage/**",
+      "**/*.test.{ts,tsx}",
+      "**/*.spec.{ts,tsx}",
+      "**/*.d.ts"
+    ]
+  },
+
+  "reports": {
+    "outputDir": ".zoryon/reports",
+    "formats": ["md", "json"],
+    "filename": "practices-report"
+  }
+}

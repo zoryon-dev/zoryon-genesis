@@ -1,0 +1,106 @@
+{
+  "provider": "clerk",
+  "name": "Clerk",
+  "version": "5.x",
+
+  "installation": {
+    "command": "pnpm add @clerk/nextjs",
+    "devDependencies": []
+  },
+
+  "envVariables": {
+    "required": [
+      {
+        "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "description": "Chave pública do Clerk (pode ser exposta no client)",
+        "example": "pk_test_..."
+      },
+      {
+        "key": "CLERK_SECRET_KEY",
+        "description": "Chave secreta do Clerk (nunca expor no client)",
+        "example": "sk_test_..."
+      }
+    ],
+    "optional": [
+      {
+        "key": "NEXT_PUBLIC_CLERK_SIGN_IN_URL",
+        "description": "URL customizada para sign in",
+        "default": "/sign-in"
+      },
+      {
+        "key": "NEXT_PUBLIC_CLERK_SIGN_UP_URL",
+        "description": "URL customizada para sign up",
+        "default": "/sign-up"
+      },
+      {
+        "key": "NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL",
+        "description": "Redirect após login",
+        "default": "/"
+      },
+      {
+        "key": "NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL",
+        "description": "Redirect após cadastro",
+        "default": "/"
+      }
+    ]
+  },
+
+  "files": {
+    "middleware": {
+      "path": "middleware.ts",
+      "template": "clerk-middleware"
+    },
+    "layout": {
+      "path": "app/layout.tsx",
+      "template": "clerk-layout"
+    },
+    "signIn": {
+      "path": "app/sign-in/[[...sign-in]]/page.tsx",
+      "template": "clerk-signin-page"
+    },
+    "signUp": {
+      "path": "app/sign-up/[[...sign-up]]/page.tsx",
+      "template": "clerk-signup-page"
+    }
+  },
+
+  "templates": {
+    "middleware": "import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'\n\nconst isPublicRoute = createRouteMatcher([\n  '/',\n  '/sign-in(.*)',\n  '/sign-up(.*)',\n  '/api/webhooks(.*)',\n])\n\nexport default clerkMiddleware((auth, request) => {\n  if (!isPublicRoute(request)) {\n    auth().protect()\n  }\n})\n\nexport const config = {\n  matcher: [\n    '/((?!_next|[^?]*\\\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',\n    '/(api|trpc)(.*)',\n  ],\n}",
+
+    "layout": "'use client'\n\nimport { ClerkProvider } from '@clerk/nextjs'\nimport { ptBR } from '@clerk/localizations'\n\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return (\n    <ClerkProvider localization={ptBR}>\n      <html lang=\"pt-BR\">\n        <body>{children}</body>\n      </html>\n    </ClerkProvider>\n  )\n}",
+
+    "signin-page": "import { SignIn } from '@clerk/nextjs'\n\nexport default function SignInPage() {\n  return (\n    <div className=\"flex min-h-screen items-center justify-center\">\n      <SignIn />\n    </div>\n  )\n}",
+
+    "signup-page": "import { SignUp } from '@clerk/nextjs'\n\nexport default function SignUpPage() {\n  return (\n    <div className=\"flex min-h-screen items-center justify-center\">\n      <SignUp />\n    </div>\n  )\n}",
+
+    "server-component": "import { auth, currentUser } from '@clerk/nextjs/server'\n\nexport default async function ServerComponent() {\n  // Opção 1: Apenas userId\n  const { userId } = auth()\n  \n  // Opção 2: User completo\n  const user = await currentUser()\n  \n  if (!userId) {\n    return <div>Not authenticated</div>\n  }\n  \n  return (\n    <div>\n      <h1>Welcome {user?.firstName}</h1>\n      <p>Email: {user?.emailAddresses[0]?.emailAddress}</p>\n    </div>\n  )\n}",
+
+    "client-component": "'use client'\n\nimport { useUser, useAuth } from '@clerk/nextjs'\n\nexport default function ClientComponent() {\n  const { user, isLoaded, isSignedIn } = useUser()\n  const { signOut } = useAuth()\n  \n  if (!isLoaded) {\n    return <div>Loading...</div>\n  }\n  \n  if (!isSignedIn) {\n    return <div>Please sign in</div>\n  }\n  \n  return (\n    <div>\n      <h1>Welcome {user.firstName}</h1>\n      <button onClick={() => signOut()}>Sign Out</button>\n    </div>\n  )\n}",
+
+    "api-route": "import { auth } from '@clerk/nextjs/server'\nimport { NextResponse } from 'next/server'\n\nexport async function GET() {\n  const { userId } = auth()\n  \n  if (!userId) {\n    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })\n  }\n  \n  // API logic here\n  return NextResponse.json({ userId })\n}"
+  },
+
+  "webhooks": {
+    "description": "Clerk pode enviar webhooks para sincronizar dados",
+    "events": ["user.created", "user.updated", "user.deleted", "session.created"],
+    "setup": [
+      "Configure endpoint no Clerk Dashboard",
+      "Adicione CLERK_WEBHOOK_SECRET ao .env",
+      "Crie route handler em app/api/webhooks/clerk/route.ts",
+      "Valide signature usando Svix"
+    ],
+    "template": "import { Webhook } from 'svix'\nimport { headers } from 'next/headers'\nimport { WebhookEvent } from '@clerk/nextjs/server'\n\nexport async function POST(req: Request) {\n  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET\n  \n  if (!WEBHOOK_SECRET) {\n    throw new Error('Please add CLERK_WEBHOOK_SECRET to .env')\n  }\n  \n  const headerPayload = headers()\n  const svix_id = headerPayload.get('svix-id')\n  const svix_timestamp = headerPayload.get('svix-timestamp')\n  const svix_signature = headerPayload.get('svix-signature')\n  \n  if (!svix_id || !svix_timestamp || !svix_signature) {\n    return new Response('Error: Missing headers', { status: 400 })\n  }\n  \n  const payload = await req.json()\n  const body = JSON.stringify(payload)\n  \n  const wh = new Webhook(WEBHOOK_SECRET)\n  let evt: WebhookEvent\n  \n  try {\n    evt = wh.verify(body, {\n      'svix-id': svix_id,\n      'svix-timestamp': svix_timestamp,\n      'svix-signature': svix_signature,\n    }) as WebhookEvent\n  } catch (err) {\n    return new Response('Error: Verification failed', { status: 400 })\n  }\n  \n  const eventType = evt.type\n  \n  if (eventType === 'user.created') {\n    const { id, email_addresses, first_name, last_name } = evt.data\n    // Sincronize com seu banco\n  }\n  \n  return new Response('Webhook received', { status: 200 })\n}"
+  },
+
+  "customization": {
+    "appearance": {
+      "description": "Customizar aparência dos componentes Clerk",
+      "example": "<ClerkProvider appearance={{ variables: { colorPrimary: '#000' } }}>"
+    },
+    "metadata": {
+      "publicMetadata": "Visível no client (ex: role, tier)",
+      "privateMetadata": "Apenas no servidor (ex: internal_id)",
+      "unsafeMetadata": "Pode ser editado pelo usuário"
+    }
+  }
+}

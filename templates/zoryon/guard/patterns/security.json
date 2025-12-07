@@ -1,0 +1,140 @@
+{
+  "pattern": "security",
+  "name": "Security Headers Middleware",
+  "description": "Adiciona headers de segurança para proteger contra ataques comuns",
+
+  "headers": {
+    "csp": {
+      "name": "Content-Security-Policy",
+      "description": "Previne XSS e injection attacks",
+      "severity": "high",
+      "directives": {
+        "default-src": "'self'",
+        "script-src": "'self' 'unsafe-inline' 'unsafe-eval'",
+        "style-src": "'self' 'unsafe-inline'",
+        "img-src": "'self' data: https:",
+        "font-src": "'self'",
+        "connect-src": "'self'",
+        "frame-ancestors": "'none'",
+        "base-uri": "'self'",
+        "form-action": "'self'"
+      },
+      "strict": {
+        "description": "CSP mais restritivo (remover unsafe-*)",
+        "script-src": "'self' 'nonce-{random}'",
+        "style-src": "'self' 'nonce-{random}'"
+      }
+    },
+    "hsts": {
+      "name": "Strict-Transport-Security",
+      "description": "Force HTTPS",
+      "severity": "high",
+      "value": "max-age=31536000; includeSubDomains; preload",
+      "requirements": ["HTTPS obrigatório", "Não use em dev"]
+    },
+    "xFrameOptions": {
+      "name": "X-Frame-Options",
+      "description": "Previne clickjacking",
+      "severity": "medium",
+      "value": "DENY",
+      "alternatives": ["DENY", "SAMEORIGIN"]
+    },
+    "xContentTypeOptions": {
+      "name": "X-Content-Type-Options",
+      "description": "Previne MIME sniffing",
+      "severity": "medium",
+      "value": "nosniff"
+    },
+    "referrerPolicy": {
+      "name": "Referrer-Policy",
+      "description": "Controla informação de referrer",
+      "severity": "low",
+      "value": "strict-origin-when-cross-origin",
+      "alternatives": [
+        "no-referrer",
+        "same-origin",
+        "strict-origin-when-cross-origin"
+      ]
+    },
+    "permissionsPolicy": {
+      "name": "Permissions-Policy",
+      "description": "Controla features do browser",
+      "severity": "medium",
+      "directives": {
+        "camera": "()",
+        "microphone": "()",
+        "geolocation": "()",
+        "interest-cohort": "()"
+      }
+    },
+    "cors": {
+      "name": "CORS Headers",
+      "description": "Controla cross-origin requests",
+      "severity": "high",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://yourdomain.com",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Max-Age": "86400"
+      }
+    }
+  },
+
+  "templates": {
+    "basic": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\n\nexport function securityHeaders(request: NextRequest) {\n  const response = NextResponse.next()\n  \n  // CSP\n  response.headers.set(\n    'Content-Security-Policy',\n    \"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'\"\n  )\n  \n  // HSTS (apenas em produção com HTTPS)\n  if (process.env.NODE_ENV === 'production') {\n    response.headers.set(\n      'Strict-Transport-Security',\n      'max-age=31536000; includeSubDomains; preload'\n    )\n  }\n  \n  // X-Frame-Options\n  response.headers.set('X-Frame-Options', 'DENY')\n  \n  // X-Content-Type-Options\n  response.headers.set('X-Content-Type-Options', 'nosniff')\n  \n  // Referrer-Policy\n  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')\n  \n  // Permissions-Policy\n  response.headers.set(\n    'Permissions-Policy',\n    'camera=(), microphone=(), geolocation=()'\n  )\n  \n  return response\n}",
+
+    "with-nonce": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\nimport crypto from 'crypto'\n\nexport function securityHeadersWithNonce(request: NextRequest) {\n  // Gera nonce para scripts/styles inline\n  const nonce = Buffer.from(crypto.randomBytes(16)).toString('base64')\n  \n  const response = NextResponse.next()\n  \n  // CSP com nonce (mais seguro)\n  response.headers.set(\n    'Content-Security-Policy',\n    `default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' 'nonce-${nonce}'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'`\n  )\n  \n  // Adiciona nonce ao request para usar em componentes\n  // Acesse com: headers().get('x-nonce')\n  response.headers.set('x-nonce', nonce)\n  \n  // Outros headers...\n  response.headers.set('X-Frame-Options', 'DENY')\n  response.headers.set('X-Content-Type-Options', 'nosniff')\n  \n  return response\n}",
+
+    "cors": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\n\nconst allowedOrigins = [\n  'https://yourdomain.com',\n  'https://www.yourdomain.com',\n]\n\nexport function corsMiddleware(request: NextRequest) {\n  const origin = request.headers.get('origin')\n  const isAllowedOrigin = origin && allowedOrigins.includes(origin)\n  \n  // Handle preflight requests\n  if (request.method === 'OPTIONS') {\n    const response = new NextResponse(null, { status: 200 })\n    \n    if (isAllowedOrigin) {\n      response.headers.set('Access-Control-Allow-Origin', origin)\n    }\n    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')\n    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')\n    response.headers.set('Access-Control-Max-Age', '86400')\n    \n    return response\n  }\n  \n  const response = NextResponse.next()\n  \n  if (isAllowedOrigin) {\n    response.headers.set('Access-Control-Allow-Origin', origin)\n    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')\n    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')\n  }\n  \n  return response\n}",
+
+    "next-config": "// next.config.js - Alternativa ao middleware\nconst nextConfig = {\n  async headers() {\n    return [\n      {\n        source: '/:path*',\n        headers: [\n          {\n            key: 'X-Frame-Options',\n            value: 'DENY',\n          },\n          {\n            key: 'X-Content-Type-Options',\n            value: 'nosniff',\n          },\n          {\n            key: 'Referrer-Policy',\n            value: 'strict-origin-when-cross-origin',\n          },\n          {\n            key: 'Permissions-Policy',\n            value: 'camera=(), microphone=(), geolocation=()',\n          },\n        ],\n      },\n      {\n        source: '/api/:path*',\n        headers: [\n          {\n            key: 'Access-Control-Allow-Origin',\n            value: 'https://yourdomain.com',\n          },\n          {\n            key: 'Access-Control-Allow-Methods',\n            value: 'GET, POST, PUT, DELETE, OPTIONS',\n          },\n          {\n            key: 'Access-Control-Allow-Headers',\n            value: 'Content-Type, Authorization',\n          },\n        ],\n      },\n    ]\n  },\n}\n\nexport default nextConfig"
+  },
+
+  "testing": {
+    "tools": ["securityheaders.com", "Mozilla Observatory"],
+    "checks": [
+      "CSP não permite unsafe-inline/unsafe-eval (ideal)",
+      "HSTS configurado em produção",
+      "X-Frame-Options presente",
+      "CORS configurado corretamente"
+    ]
+  },
+
+  "common_issues": {
+    "csp_breaks_app": {
+      "problem": "CSP muito restritivo quebra funcionalidades",
+      "solution": "Comece com CSP permissivo, vá restringindo gradualmente"
+    },
+    "inline_scripts": {
+      "problem": "Scripts inline bloqueados por CSP",
+      "solution": "Use nonces ou mova scripts para arquivos externos"
+    },
+    "third_party": {
+      "problem": "Serviços third-party (analytics, CDN) bloqueados",
+      "solution": "Adicione domínios confiáveis ao CSP"
+    },
+    "cors_errors": {
+      "problem": "CORS blocking legitimate requests",
+      "solution": "Verifique allowedOrigins e adicione domínios necessários"
+    }
+  },
+
+  "recommendations": {
+    "development": [
+      "CSP permissivo para evitar bloqueios",
+      "Não use HSTS (localhost não é HTTPS)",
+      "CORS aberto para facilitar testes"
+    ],
+    "staging": [
+      "CSP intermediário",
+      "HSTS habilitado",
+      "CORS restrito a domínios de staging"
+    ],
+    "production": [
+      "CSP restritivo sem unsafe-*",
+      "HSTS com preload",
+      "CORS apenas para domínios necessários",
+      "Monitore violações de CSP"
+    ]
+  }
+}

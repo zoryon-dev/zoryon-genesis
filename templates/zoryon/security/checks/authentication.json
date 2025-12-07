@@ -1,0 +1,153 @@
+{
+  "id": "authentication",
+  "name": "Authentication & Authorization Checks",
+  "description": "Verifica implementacao de autenticacao e autorizacao",
+
+  "checks": [
+    {
+      "id": "auth-provider",
+      "name": "Auth Provider Configured",
+      "description": "Verifica se um provider de auth esta configurado",
+      "providers": ["clerk", "nextauth", "auth0", "supabase", "firebase"],
+      "severity": "info",
+      "files": [
+        "src/app/api/auth/**/*",
+        "src/middleware.ts",
+        "auth.config.ts",
+        "auth.ts"
+      ]
+    },
+    {
+      "id": "protected-routes",
+      "name": "Protected Routes",
+      "description": "Verifica se rotas sensíveis estao protegidas",
+      "patterns": [
+        {
+          "path": "src/app/api/**/*.ts",
+          "shouldHave": ["auth", "session", "getServerSession", "currentUser"],
+          "severity": "high"
+        },
+        {
+          "path": "src/app/(dashboard)/**/*",
+          "shouldHave": ["middleware", "auth"],
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "id": "middleware-auth",
+      "name": "Middleware Authentication",
+      "description": "Verifica se middleware.ts implementa auth",
+      "file": "src/middleware.ts",
+      "patterns": [
+        "authMiddleware",
+        "clerkMiddleware",
+        "withAuth",
+        "getToken"
+      ],
+      "severity": "high"
+    },
+    {
+      "id": "password-hashing",
+      "name": "Password Hashing",
+      "description": "Verifica se senhas sao hashadas corretamente",
+      "goodPatterns": ["bcrypt", "argon2", "scrypt"],
+      "badPatterns": [
+        {
+          "pattern": "md5\\s*\\(",
+          "message": "MD5 nao e seguro para senhas"
+        },
+        {
+          "pattern": "sha1\\s*\\(",
+          "message": "SHA1 nao e seguro para senhas"
+        },
+        {
+          "pattern": "sha256\\s*\\(",
+          "message": "SHA256 sem salt nao e recomendado"
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "id": "session-config",
+      "name": "Session Configuration",
+      "description": "Verifica configuracao de sessoes",
+      "checks": [
+        {
+          "name": "httpOnly cookies",
+          "pattern": "httpOnly:\\s*true",
+          "severity": "high"
+        },
+        {
+          "name": "secure cookies",
+          "pattern": "secure:\\s*true",
+          "severity": "high"
+        },
+        {
+          "name": "sameSite",
+          "pattern": "sameSite:\\s*['\"](?:strict|lax)['\"]",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "id": "jwt-config",
+      "name": "JWT Configuration",
+      "description": "Verifica configuracao de JWT",
+      "checks": [
+        {
+          "name": "Algorithm specified",
+          "badPatterns": ["algorithm:\\s*['\"]none['\"]"],
+          "severity": "critical"
+        },
+        {
+          "name": "Expiration set",
+          "pattern": "expiresIn|exp",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "id": "rate-limiting",
+      "name": "Rate Limiting",
+      "description": "Verifica implementacao de rate limiting",
+      "patterns": [
+        "rateLimit",
+        "rateLimiter",
+        "upstash/ratelimit",
+        "@upstash/redis",
+        "express-rate-limit"
+      ],
+      "files": ["src/middleware.ts", "src/app/api/**/*"],
+      "severity": "medium",
+      "fix": "Implemente rate limiting para prevenir ataques de forca bruta"
+    }
+  ],
+
+  "bestPractices": [
+    {
+      "id": "mfa",
+      "name": "Multi-Factor Authentication",
+      "description": "Considere implementar MFA para contas sensiveis",
+      "severity": "info"
+    },
+    {
+      "id": "password-policy",
+      "name": "Password Policy",
+      "description": "Implemente politica de senhas fortes (min 12 chars, complexidade)",
+      "severity": "medium"
+    },
+    {
+      "id": "account-lockout",
+      "name": "Account Lockout",
+      "description": "Implemente bloqueio apos tentativas falhas",
+      "severity": "medium"
+    },
+    {
+      "id": "secure-reset",
+      "name": "Secure Password Reset",
+      "description": "Use tokens expiravies e unicos para reset de senha",
+      "severity": "high"
+    }
+  ]
+}

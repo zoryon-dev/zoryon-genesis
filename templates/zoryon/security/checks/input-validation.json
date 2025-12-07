@@ -1,0 +1,121 @@
+{
+  "id": "input-validation",
+  "name": "Input Validation Checks",
+  "description": "Verifica validacao de dados de entrada",
+
+  "checks": [
+    {
+      "id": "zod-validation",
+      "name": "Schema Validation (Zod)",
+      "description": "Verifica uso de Zod para validacao",
+      "patterns": ["z.object", "z.string", "z.number", "zodResolver"],
+      "files": ["src/app/api/**/*", "src/lib/validations/**/*"],
+      "severity": "info",
+      "recommendation": "Use Zod para validar todas as entradas de API"
+    },
+    {
+      "id": "api-validation",
+      "name": "API Input Validation",
+      "description": "Verifica se APIs validam entrada",
+      "check": "api-routes-have-validation",
+      "severity": "high"
+    },
+    {
+      "id": "sanitization",
+      "name": "Input Sanitization",
+      "description": "Verifica sanitizacao de entradas",
+      "goodPatterns": ["DOMPurify", "sanitize-html", "xss", "validator"],
+      "severity": "medium"
+    },
+    {
+      "id": "sql-parameterized",
+      "name": "Parameterized Queries",
+      "description": "Verifica uso de queries parametrizadas",
+      "goodPatterns": [
+        "prisma\\.",
+        "\\$queryRaw`",
+        "db\\.query\\(",
+        "prepared"
+      ],
+      "badPatterns": [
+        {
+          "pattern": "\\$\\{.*\\}.*(?:SELECT|INSERT|UPDATE|DELETE)",
+          "message": "Possivel SQL Injection - use queries parametrizadas"
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "id": "file-upload",
+      "name": "File Upload Validation",
+      "description": "Verifica validacao de uploads",
+      "checks": [
+        {
+          "name": "File type validation",
+          "patterns": ["mimetype", "file.type", "accept="],
+          "severity": "high"
+        },
+        {
+          "name": "File size limit",
+          "patterns": ["maxSize", "limit", "MAX_FILE_SIZE"],
+          "severity": "medium"
+        },
+        {
+          "name": "Filename sanitization",
+          "patterns": ["sanitize", "path.basename"],
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "id": "type-coercion",
+      "name": "Type Coercion Safety",
+      "description": "Verifica coercao de tipos segura",
+      "badPatterns": [
+        {
+          "pattern": "parseInt\\([^,]+\\)(?!,\\s*10)",
+          "message": "parseInt sem radix pode causar bugs - use parseInt(x, 10)"
+        },
+        {
+          "pattern": "==(?!=)",
+          "message": "Prefira === para comparacao estrita"
+        }
+      ],
+      "severity": "low"
+    }
+  ],
+
+  "validationLibraries": {
+    "recommended": [
+      {
+        "name": "zod",
+        "description": "TypeScript-first schema validation",
+        "usage": "API routes, form validation, env validation"
+      },
+      {
+        "name": "valibot",
+        "description": "Lightweight alternative to Zod",
+        "usage": "When bundle size matters"
+      }
+    ],
+    "sanitization": [
+      {
+        "name": "DOMPurify",
+        "description": "XSS sanitizer for HTML",
+        "usage": "User-generated HTML content"
+      },
+      {
+        "name": "validator",
+        "description": "String validation and sanitization",
+        "usage": "Email, URL, escape HTML"
+      }
+    ]
+  },
+
+  "patterns": {
+    "apiRouteValidation": {
+      "description": "Padrao recomendado para validacao em API routes",
+      "example": "import { z } from 'zod'\n\nconst schema = z.object({\n  email: z.string().email(),\n  password: z.string().min(8)\n})\n\nexport async function POST(req: Request) {\n  const body = await req.json()\n  const result = schema.safeParse(body)\n  \n  if (!result.success) {\n    return Response.json(\n      { error: result.error.flatten() },\n      { status: 400 }\n    )\n  }\n  \n  // result.data is typed and validated\n}"
+    }
+  }
+}

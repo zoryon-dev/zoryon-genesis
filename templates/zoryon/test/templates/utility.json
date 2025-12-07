@@ -1,0 +1,9 @@
+{
+  "type": "unit",
+  "pattern": "utility",
+  "description": "Template para teste de função utilitária",
+
+  "template": "import { describe, it, expect } from 'vitest'\nimport { {{FUNCTION_NAME}} } from '@/lib/{{FUNCTION_PATH}}'\n\ndescribe('{{FUNCTION_NAME}}', () => {\n  it('should return expected result with valid input', () => {\n    const input = // TODO: Add test input\n    const expected = // TODO: Add expected output\n    \n    const result = {{FUNCTION_NAME}}(input)\n    \n    expect(result).toBe(expected)\n  })\n\n  it('should handle edge cases', () => {\n    expect({{FUNCTION_NAME}}(null)).toBe(undefined)\n    expect({{FUNCTION_NAME}}(undefined)).toBe(undefined)\n    expect({{FUNCTION_NAME}}('')).toBe('')\n  })\n\n  it('should throw error for invalid input', () => {\n    expect(() => {{FUNCTION_NAME}}(invalidInput)).toThrow()\n  })\n})\n",
+
+  "withMultipleCases": "import { describe, it, expect } from 'vitest'\nimport { {{FUNCTION_NAME}} } from '@/lib/{{FUNCTION_PATH}}'\n\ndescribe('{{FUNCTION_NAME}}', () => {\n  it.each([\n    { input: 'value1', expected: 'result1' },\n    { input: 'value2', expected: 'result2' },\n    { input: 'value3', expected: 'result3' },\n  ])('should convert $input to $expected', ({ input, expected }) => {\n    expect({{FUNCTION_NAME}}(input)).toBe(expected)\n  })\n})\n"
+}

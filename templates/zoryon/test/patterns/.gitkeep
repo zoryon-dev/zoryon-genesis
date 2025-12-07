@@ -1,0 +1,11 @@
+# Test Patterns Directory
+
+Este diretório está reservado para futuros patterns de teste reutilizáveis.
+
+Planejado para conter:
+- Patterns comuns de mocking
+- Fixtures compartilhados
+- Test helpers
+- Custom matchers
+
+Status: Planejado para implementação futura

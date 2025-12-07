@@ -1,0 +1,175 @@
+{
+  "id": "zory-auth",
+  "version": "0.0.5",
+  "name": "Zory-Auth",
+  "description": "Agente para configurar autenticação em aplicações Next.js",
+
+  "providers": {
+    "clerk": {
+      "name": "Clerk",
+      "description": "Solução completa de autenticação como serviço",
+      "pricing": "Freemium (5k MAU grátis)",
+      "complexity": "low",
+      "features": [
+        "UI pré-construída",
+        "Multi-tenancy built-in",
+        "Webhooks",
+        "User management dashboard",
+        "Social logins fácil",
+        "Organizations",
+        "Custom claims"
+      ],
+      "bestFor": ["SaaS", "B2B", "Multi-tenancy", "Prototipagem rápida"],
+      "setup": {
+        "dependencies": ["@clerk/nextjs"],
+        "envVars": ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", "CLERK_SECRET_KEY"],
+        "files": ["middleware.ts", "app/layout.tsx"]
+      }
+    },
+    "nextauth": {
+      "name": "NextAuth.js v5 (Auth.js)",
+      "description": "Biblioteca open-source para autenticação",
+      "pricing": "Grátis (open-source)",
+      "complexity": "medium",
+      "features": [
+        "Múltiplos providers",
+        "Database adapters",
+        "JWT ou Database sessions",
+        "Edge-compatible",
+        "Customizável",
+        "Callbacks poderosos"
+      ],
+      "bestFor": ["Controle total", "Custom auth flows", "Self-hosted", "Budget limitado"],
+      "setup": {
+        "dependencies": ["next-auth@beta", "@auth/prisma-adapter"],
+        "envVars": ["AUTH_SECRET", "AUTH_URL"],
+        "files": ["auth.ts", "middleware.ts", "app/api/auth/[...nextauth]/route.ts"]
+      }
+    },
+    "custom": {
+      "name": "Custom Auth",
+      "description": "Implementação customizada com JWT",
+      "pricing": "Grátis",
+      "complexity": "high",
+      "features": [
+        "Controle total",
+        "Zero vendor lock-in",
+        "Custom business logic",
+        "Performance otimizada"
+      ],
+      "bestFor": ["Requisitos únicos", "High security", "Compliance específico"],
+      "setup": {
+        "dependencies": ["jose", "bcryptjs", "@prisma/client"],
+        "envVars": ["JWT_SECRET", "JWT_REFRESH_SECRET"],
+        "files": ["lib/auth.ts", "lib/jwt.ts", "middleware.ts"]
+      }
+    }
+  },
+
+  "features": {
+    "socialLogins": {
+      "name": "Social Logins",
+      "providers": ["Google", "GitHub", "Discord", "Twitter", "LinkedIn"],
+      "clerk": "Built-in, configuração via dashboard",
+      "nextauth": "Via providers, requer OAuth apps",
+      "custom": "Implementação manual completa"
+    },
+    "emailPassword": {
+      "name": "Email/Password",
+      "clerk": "Built-in com verificação de email",
+      "nextauth": "Via Credentials provider",
+      "custom": "Implementação manual com bcrypt"
+    },
+    "passwordless": {
+      "name": "Passwordless (Magic Links)",
+      "clerk": "Built-in",
+      "nextauth": "Via Email provider",
+      "custom": "Requer email service (Resend, SendGrid)"
+    },
+    "mfa": {
+      "name": "Multi-Factor Authentication",
+      "clerk": "Built-in (TOTP, SMS)",
+      "nextauth": "Requer implementação custom",
+      "custom": "Implementação manual completa"
+    },
+    "sessionManagement": {
+      "name": "Gerenciamento de Sessão",
+      "clerk": "Automático, tokens JWTs",
+      "nextauth": "JWT ou Database sessions",
+      "custom": "Implementação manual (JWT + refresh)"
+    },
+    "userMetadata": {
+      "name": "User Metadata",
+      "clerk": "publicMetadata, privateMetadata, unsafeMetadata",
+      "nextauth": "Via callbacks e session",
+      "custom": "Tabela users no banco"
+    }
+  },
+
+  "architecture": {
+    "middleware": {
+      "description": "Proteção de rotas no Edge Runtime",
+      "required": true,
+      "file": "middleware.ts",
+      "matchers": ["/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)"]
+    },
+    "layout": {
+      "description": "Provider no layout raiz",
+      "required": true,
+      "file": "app/layout.tsx",
+      "clerk": "ClerkProvider",
+      "nextauth": "SessionProvider",
+      "custom": "AuthProvider (context)"
+    },
+    "serverComponents": {
+      "description": "Autenticação em Server Components",
+      "clerk": "auth() ou currentUser()",
+      "nextauth": "auth() from next-auth",
+      "custom": "cookies().get('session')"
+    },
+    "clientComponents": {
+      "description": "Autenticação em Client Components",
+      "clerk": "useUser(), useAuth()",
+      "nextauth": "useSession()",
+      "custom": "useAuth() custom hook"
+    }
+  },
+
+  "securityBestPractices": [
+    "Sempre use HTTPS em produção",
+    "Configure CSRF protection",
+    "Implemente rate limiting",
+    "Use secure, httpOnly cookies",
+    "Rotacione tokens regularmente",
+    "Valide tokens no servidor",
+    "Não exponha secrets no client",
+    "Use environment variables",
+    "Implemente timeout de sessão",
+    "Log eventos de autenticação"
+  ],
+
+  "migrationPaths": {
+    "fromClerk": {
+      "to": "NextAuth",
+      "difficulty": "medium",
+      "steps": [
+        "Exportar usuários via Clerk API",
+        "Adaptar schema do banco",
+        "Configurar NextAuth providers",
+        "Migrar metadados",
+        "Atualizar componentes"
+      ]
+    },
+    "fromNextAuth": {
+      "to": "Clerk",
+      "difficulty": "easy",
+      "steps": [
+        "Configurar Clerk",
+        "Importar usuários via API",
+        "Substituir componentes",
+        "Remover NextAuth config",
+        "Atualizar middleware"
+      ]
+    }
+  }
+}

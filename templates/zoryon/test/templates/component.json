@@ -1,0 +1,48 @@
+{
+  "type": "unit",
+  "pattern": "component",
+  "description": "Template para teste de componente React",
+
+  "template": "import { render, screen } from '@testing-library/react'\nimport { userEvent } from '@testing-library/user-event'\nimport { describe, it, expect, vi } from 'vitest'\nimport { {{COMPONENT_NAME}} } from '@/components/{{COMPONENT_PATH}}'\n\ndescribe('{{COMPONENT_NAME}}', () => {\n  it('should render correctly', () => {\n    render(<{{COMPONENT_NAME}} />)\n    \n    // Arrange & Act\n    const element = screen.getByRole('{{ROLE}}')\n    \n    // Assert\n    expect(element).toBeInTheDocument()\n  })\n\n  it('should handle user interaction', async () => {\n    const user = userEvent.setup()\n    const mockOnClick = vi.fn()\n    \n    render(<{{COMPONENT_NAME}} onClick={mockOnClick} />)\n    \n    // Act\n    await user.click(screen.getByRole('button'))\n    \n    // Assert\n    expect(mockOnClick).toHaveBeenCalledTimes(1)\n  })\n\n  it('should display correct text content', () => {\n    const testText = 'Test Content'\n    \n    render(<{{COMPONENT_NAME}} text={testText} />)\n    \n    expect(screen.getByText(testText)).toBeInTheDocument()\n  })\n\n  it('should apply correct classes', () => {\n    render(<{{COMPONENT_NAME}} className=\"custom-class\" />)\n    \n    const element = screen.getByRole('{{ROLE}}')\n    expect(element).toHaveClass('custom-class')\n  })\n})\n",
+
+  "withProps": "import { render, screen } from '@testing-library/react'\nimport { describe, it, expect } from 'vitest'\nimport { {{COMPONENT_NAME}}, {{COMPONENT_NAME}}Props } from '@/components/{{COMPONENT_PATH}}'\n\ndescribe('{{COMPONENT_NAME}}', () => {\n  const defaultProps: {{COMPONENT_NAME}}Props = {\n    // Add default props here\n  }\n\n  it('should render with default props', () => {\n    render(<{{COMPONENT_NAME}} {...defaultProps} />)\n    expect(screen.getByRole('{{ROLE}}')).toBeInTheDocument()\n  })\n\n  it('should render with custom props', () => {\n    const customProps = {\n      ...defaultProps,\n      variant: 'primary'\n    }\n    \n    render(<{{COMPONENT_NAME}} {...customProps} />)\n    expect(screen.getByRole('{{ROLE}}')).toHaveAttribute('data-variant', 'primary')\n  })\n})\n",
+
+  "withMocks": "import { render, screen, waitFor } from '@testing-library/react'\nimport { describe, it, expect, vi, beforeEach } from 'vitest'\nimport { {{COMPONENT_NAME}} } from '@/components/{{COMPONENT_PATH}}'\n\n// Mock dependencies\nvi.mock('next/navigation', () => ({\n  useRouter: vi.fn(() => ({\n    push: vi.fn(),\n    pathname: '/',\n  })),\n}))\n\ndescribe('{{COMPONENT_NAME}}', () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n  })\n\n  it('should fetch and display data', async () => {\n    render(<{{COMPONENT_NAME}} />)\n    \n    await waitFor(() => {\n      expect(screen.getByText(/loading/i)).not.toBeInTheDocument()\n    })\n    \n    expect(screen.getByText(/content/i)).toBeInTheDocument()\n  })\n})\n",
+
+  "roles": [
+    "button",
+    "link",
+    "heading",
+    "textbox",
+    "checkbox",
+    "radio",
+    "combobox",
+    "listbox",
+    "dialog",
+    "navigation",
+    "main",
+    "complementary",
+    "contentinfo",
+    "banner",
+    "form",
+    "search",
+    "article",
+    "section",
+    "img",
+    "list",
+    "listitem"
+  ],
+
+  "queries": {
+    "recommended": [
+      "getByRole",
+      "getByLabelText",
+      "getByPlaceholderText",
+      "getByText",
+      "getByDisplayValue"
+    ],
+    "avoid": [
+      "getByTestId (use apenas quando necessário)"
+    ]
+  }
+}

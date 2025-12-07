@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "."],
+      "_comment": "Permite que a IA leia e escreva arquivos do projeto"
+    }
+  }
+}

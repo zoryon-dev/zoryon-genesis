@@ -1,0 +1,136 @@
+{
+  "id": "code-quality",
+  "name": "Qualidade de Codigo",
+  "description": "Verifica DRY, dead code, organizacao e estrutura",
+
+  "checks": [
+    {
+      "id": "dry-violation",
+      "name": "Codigo Duplicado (DRY)",
+      "description": "Detecta padroes de codigo duplicado",
+      "severity": "medium",
+      "patterns": {
+        "duplicateBlocks": {
+          "minLines": 5,
+          "description": "Blocos de codigo identicos com mais de 5 linhas"
+        },
+        "similarFunctions": {
+          "threshold": 0.8,
+          "description": "Funcoes com mais de 80% de similaridade"
+        }
+      },
+      "fix": "Extraia codigo duplicado para funcoes ou componentes reutilizaveis"
+    },
+    {
+      "id": "dead-code",
+      "name": "Codigo Morto",
+      "description": "Detecta codigo nao utilizado",
+      "severity": "low",
+      "patterns": [
+        {
+          "type": "unused-import",
+          "regex": "import\\s+\\{[^}]+\\}\\s+from",
+          "description": "Imports nao utilizados"
+        },
+        {
+          "type": "unused-variable",
+          "description": "Variaveis declaradas mas nunca utilizadas"
+        },
+        {
+          "type": "commented-code",
+          "regex": "^\\s*//\\s*(const|let|var|function|class|import|export|return|if|for|while)",
+          "description": "Codigo comentado sem explicacao"
+        },
+        {
+          "type": "unreachable-code",
+          "description": "Codigo apos return/throw/break"
+        }
+      ],
+      "fix": "Remova codigo nao utilizado para melhorar manutencao"
+    },
+    {
+      "id": "large-file",
+      "name": "Arquivo Grande",
+      "description": "Arquivos com mais de 300 linhas",
+      "severity": "medium",
+      "threshold": 300,
+      "fix": "Divida em arquivos menores com responsabilidades unicas"
+    },
+    {
+      "id": "deep-nesting",
+      "name": "Aninhamento Profundo",
+      "description": "Blocos com mais de 4 niveis de aninhamento",
+      "severity": "medium",
+      "maxDepth": 4,
+      "patterns": [
+        "if.*{[^}]*if.*{[^}]*if.*{[^}]*if.*{",
+        "\\.map\\([^)]*\\.map\\([^)]*\\.map\\("
+      ],
+      "fix": "Use early returns, extraia funcoes auxiliares ou componentes"
+    },
+    {
+      "id": "long-function",
+      "name": "Funcao Longa",
+      "description": "Funcoes com mais de 50 linhas",
+      "severity": "low",
+      "threshold": 50,
+      "fix": "Divida em funcoes menores com responsabilidades unicas"
+    },
+    {
+      "id": "magic-numbers",
+      "name": "Numeros Magicos",
+      "description": "Numeros literais sem constantes nomeadas",
+      "severity": "info",
+      "patterns": [
+        "\\b(?!0|1|2|-1)\\d{2,}\\b",
+        "setTimeout\\([^,]+,\\s*\\d{4,}\\)",
+        "setInterval\\([^,]+,\\s*\\d{4,}\\)"
+      ],
+      "allowedNumbers": [0, 1, 2, -1, 100, 1000],
+      "fix": "Use constantes nomeadas para melhorar legibilidade"
+    },
+    {
+      "id": "console-statements",
+      "name": "Console Statements",
+      "description": "console.log em codigo de producao",
+      "severity": "low",
+      "patterns": [
+        "console\\.log\\(",
+        "console\\.debug\\(",
+        "console\\.info\\(",
+        "console\\.warn\\(",
+        "console\\.trace\\("
+      ],
+      "exclude": ["*.test.*", "*.spec.*", "scripts/**"],
+      "fix": "Remova ou substitua por logger apropriado"
+    },
+    {
+      "id": "todo-fixme",
+      "name": "TODO/FIXME",
+      "description": "Comentarios TODO ou FIXME pendentes",
+      "severity": "info",
+      "patterns": [
+        "//\\s*TODO:",
+        "//\\s*FIXME:",
+        "//\\s*HACK:",
+        "//\\s*XXX:"
+      ],
+      "fix": "Resolva ou crie tasks para esses itens"
+    }
+  ],
+
+  "recommendations": {
+    "codeOrganization": [
+      "Use feature-based architecture para projetos medios/grandes",
+      "Mantenha arquivos com menos de 300 linhas",
+      "Funcoes com menos de 50 linhas",
+      "Maximo 4 niveis de aninhamento"
+    ],
+    "naming": [
+      "Use nomes descritivos para variaveis e funcoes",
+      "Prefixe handlers com 'handle' (handleClick, handleSubmit)",
+      "Use camelCase para variaveis e funcoes",
+      "Use PascalCase para componentes e tipos"
+    ]
+  }
+}

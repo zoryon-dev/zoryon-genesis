@@ -1,0 +1,146 @@
+{
+  "id": "typescript",
+  "name": "TypeScript Best Practices",
+  "description": "Verifica uso correto de TypeScript e tipagem",
+
+  "checks": [
+    {
+      "id": "explicit-any",
+      "name": "Uso de 'any'",
+      "description": "Detecta uso explicito do tipo 'any'",
+      "severity": "high",
+      "patterns": [
+        ":\\s*any\\b",
+        "<any>",
+        "as any",
+        "any\\[\\]"
+      ],
+      "allowedContexts": ["catch", "test"],
+      "fix": "Substitua 'any' por tipos especificos ou 'unknown'"
+    },
+    {
+      "id": "implicit-any",
+      "name": "Any Implicito",
+      "description": "Parametros ou variaveis sem tipo definido",
+      "severity": "medium",
+      "patterns": [
+        "function\\s+\\w+\\s*\\([^:)]+\\)",
+        "const\\s+\\w+\\s*=\\s*\\([^:)]+\\)\\s*=>"
+      ],
+      "fix": "Adicione tipos explicitos a parametros e retornos"
+    },
+    {
+      "id": "type-assertion-misuse",
+      "name": "Type Assertion Inadequada",
+      "description": "Uso excessivo de 'as' ou type assertions",
+      "severity": "medium",
+      "patterns": [
+        "as\\s+\\w+",
+        "<\\w+>\\s*\\("
+      ],
+      "maxPerFile": 3,
+      "fix": "Use type guards ou narrowing ao inves de assertions"
+    },
+    {
+      "id": "missing-return-type",
+      "name": "Tipo de Retorno Ausente",
+      "description": "Funcoes exportadas sem tipo de retorno explicito",
+      "severity": "medium",
+      "patterns": [
+        "export\\s+(async\\s+)?function\\s+\\w+\\s*\\([^)]*\\)\\s*{"
+      ],
+      "fix": "Adicione tipo de retorno explicito para funcoes exportadas"
+    },
+    {
+      "id": "non-null-assertion",
+      "name": "Non-Null Assertion",
+      "description": "Uso de ! para afirmar nao-nulo",
+      "severity": "medium",
+      "patterns": [
+        "\\w+!\\.",
+        "\\w+!\\["
+      ],
+      "fix": "Use optional chaining (?.) ou verificacao explicita de null"
+    },
+    {
+      "id": "interface-vs-type",
+      "name": "Interface vs Type Inconsistente",
+      "description": "Uso inconsistente de interface e type",
+      "severity": "info",
+      "recommendation": "Use 'interface' para objetos publicos, 'type' para unions/intersections"
+    },
+    {
+      "id": "enum-usage",
+      "name": "Uso de Enum",
+      "description": "Enums podem causar problemas de bundle",
+      "severity": "info",
+      "patterns": [
+        "enum\\s+\\w+"
+      ],
+      "fix": "Considere usar 'as const' com objetos para melhor tree-shaking"
+    },
+    {
+      "id": "strict-mode-config",
+      "name": "Strict Mode",
+      "description": "Verifica se strict mode esta habilitado",
+      "severity": "high",
+      "configCheck": {
+        "file": "tsconfig.json",
+        "required": {
+          "strict": true
+        },
+        "recommended": {
+          "noUncheckedIndexedAccess": true,
+          "noImplicitReturns": true,
+          "noUnusedLocals": true,
+          "noUnusedParameters": true
+        }
+      }
+    },
+    {
+      "id": "unsafe-object-access",
+      "name": "Acesso Inseguro a Objetos",
+      "description": "Acesso a propriedades sem verificacao de existencia",
+      "severity": "medium",
+      "patterns": [
+        "\\w+\\[\\w+\\](?!\\.)",
+        "Object\\.keys\\([^)]+\\)\\.forEach"
+      ],
+      "fix": "Use optional chaining ou verificacao explicita"
+    }
+  ],
+
+  "strictModeConfig": {
+    "description": "Configuracao recomendada para tsconfig.json",
+    "compilerOptions": {
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      "alwaysStrict": true,
+      "noUncheckedIndexedAccess": true,
+      "noImplicitReturns": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "forceConsistentCasingInFileNames": true
+    }
+  },
+
+  "recommendations": {
+    "typing": [
+      "Prefira 'unknown' sobre 'any' quando tipo e incerto",
+      "Use type guards para narrowing seguro",
+      "Aproveite inferencia de tipos quando possivel",
+      "Defina tipos explicitos para APIs publicas"
+    ],
+    "generics": [
+      "Use generics para codigo reutilizavel type-safe",
+      "Nomeie generics de forma descritiva (TData, TError)",
+      "Adicione constraints quando apropriado"
+    ]
+  }
+}

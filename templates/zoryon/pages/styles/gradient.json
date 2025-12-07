@@ -1,0 +1,89 @@
+{
+  "id": "gradient",
+  "name": "Gradient & Dark",
+  "description": "Vibrant gradients on dark backgrounds, modern tech aesthetic",
+
+  "characteristics": {
+    "layout": "bold sections, dramatic contrasts",
+    "whitespace": "strategic spacing for impact",
+    "colors": "dark base with vibrant gradient accents",
+    "typography": "bold, often with gradient text effects",
+    "images": "3D renders, abstract shapes, glow effects",
+    "effects": "gradients, glows, subtle animations"
+  },
+
+  "palette": {
+    "background": "#0A0A0A",
+    "surface": "#18181B",
+    "surfaceHover": "#27272A",
+    "text": "#FAFAFA",
+    "textMuted": "#A1A1AA",
+    "border": "#27272A",
+    "gradientStart": "#8B5CF6",
+    "gradientEnd": "#EC4899",
+    "accent": "#22D3EE"
+  },
+
+  "typography": {
+    "fontFamily": "Inter, system-ui, sans-serif",
+    "headingWeight": "800",
+    "bodyWeight": "400",
+    "lineHeight": "1.5"
+  },
+
+  "spacing": {
+    "sectionPadding": "py-24 lg:py-32",
+    "containerMax": "max-w-6xl",
+    "gap": "gap-8"
+  },
+
+  "components": {
+    "buttons": "bg-gradient-to-r from-violet-500 to-pink-500 text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity",
+    "cards": "bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-zinc-700 transition-colors",
+    "badges": "bg-gradient-to-r from-violet-500/20 to-pink-500/20 text-violet-300 text-sm font-medium px-3 py-1 rounded-full border border-violet-500/30"
+  },
+
+  "tailwindClasses": {
+    "hero": "min-h-screen bg-black flex items-center justify-center relative overflow-hidden",
+    "gradientText": "bg-gradient-to-r from-violet-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent",
+    "headline": "text-5xl md:text-7xl font-extrabold tracking-tight",
+    "subheadline": "text-xl text-zinc-400 max-w-2xl mx-auto mt-6",
+    "cta": "bg-gradient-to-r from-violet-500 to-pink-500 text-white rounded-full px-8 py-4 text-lg font-semibold hover:shadow-lg hover:shadow-violet-500/25 transition-all",
+    "ctaSecondary": "border border-zinc-700 text-white rounded-full px-8 py-4 text-lg hover:bg-zinc-900 hover:border-zinc-600",
+    "glowEffect": "absolute w-96 h-96 bg-violet-500/30 rounded-full blur-3xl -z-10"
+  },
+
+  "cssRequired": {
+    "gradient-text": "background: linear-gradient(90deg, #8B5CF6, #EC4899, #22D3EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent;",
+    "glow": "box-shadow: 0 0 60px rgba(139, 92, 246, 0.3);",
+    "noise": "background-image: url('data:image/svg+xml,...'); /* subtle noise texture */"
+  },
+
+  "promptKeywords": [
+    "dark mode",
+    "vibrant gradients",
+    "purple to pink gradient",
+    "neon accents",
+    "glow effects",
+    "tech startup aesthetic",
+    "bold typography",
+    "modern and edgy",
+    "high contrast",
+    "futuristic"
+  ],
+
+  "doNot": [
+    "Use too many gradient colors",
+    "Make gradients too bright (eye strain)",
+    "Forget dark mode accessibility",
+    "Overuse glow effects",
+    "Make text unreadable on dark bg"
+  ],
+
+  "inspirations": [
+    "vercel.com",
+    "raycast.com",
+    "linear.app",
+    "planetscale.com"
+  ]
+}

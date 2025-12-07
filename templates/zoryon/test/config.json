@@ -1,0 +1,153 @@
+{
+  "agent": "zory-test",
+  "version": "0.0.10",
+  "name": "Zory-Test - Gerador de Testes",
+  "description": "Agente para gerar testes automatizados (unit, integration, e2e)",
+
+  "testTypes": {
+    "unit": {
+      "description": "Testes unitários de componentes e funções",
+      "runner": "vitest",
+      "library": "@testing-library/react",
+      "patterns": ["components", "utils", "hooks"],
+      "fileNaming": "{name}.test.tsx",
+      "location": "tests/unit/"
+    },
+    "integration": {
+      "description": "Testes de integração de páginas e APIs",
+      "runner": "vitest",
+      "library": "@testing-library/react",
+      "patterns": ["pages", "api-routes"],
+      "fileNaming": "{name}.integration.test.tsx",
+      "location": "tests/integration/"
+    },
+    "e2e": {
+      "description": "Testes end-to-end de fluxos de usuário",
+      "runner": "playwright",
+      "patterns": ["user-flows", "scenarios"],
+      "fileNaming": "{name}.spec.ts",
+      "location": "tests/e2e/"
+    }
+  },
+
+  "tools": {
+    "vitest": {
+      "version": "^2.1.0",
+      "config": "vitest.config.ts",
+      "features": ["jsdom", "coverage", "watch", "ui"]
+    },
+    "playwright": {
+      "version": "^1.48.0",
+      "config": "playwright.config.ts",
+      "browsers": ["chromium", "firefox", "webkit"]
+    },
+    "testingLibrary": {
+      "react": "^16.1.0",
+      "userEvent": "^14.5.2",
+      "jest-dom": "^6.6.3"
+    },
+    "msw": {
+      "version": "^2.6.4",
+      "description": "Mock Service Worker para mockar APIs"
+    }
+  },
+
+  "templates": {
+    "component": {
+      "type": "unit",
+      "description": "Teste de componente React",
+      "imports": ["render", "screen", "userEvent"],
+      "structure": ["describe", "it", "expect"]
+    },
+    "hook": {
+      "type": "unit",
+      "description": "Teste de custom hook",
+      "imports": ["renderHook", "act"],
+      "structure": ["describe", "it", "expect"]
+    },
+    "utility": {
+      "type": "unit",
+      "description": "Teste de função utilitária",
+      "imports": ["expect"],
+      "structure": ["describe", "it", "expect"]
+    },
+    "page": {
+      "type": "integration",
+      "description": "Teste de página Next.js",
+      "imports": ["render", "screen", "waitFor"],
+      "mocking": ["api-routes", "navigation"]
+    },
+    "api-route": {
+      "type": "integration",
+      "description": "Teste de API route",
+      "imports": ["expect"],
+      "mocking": ["database", "external-apis"]
+    },
+    "user-flow": {
+      "type": "e2e",
+      "description": "Teste de fluxo completo do usuário",
+      "imports": ["test", "expect", "page"],
+      "structure": ["test.describe", "test", "expect"]
+    }
+  },
+
+  "coverage": {
+    "threshold": {
+      "statements": 80,
+      "branches": 80,
+      "functions": 80,
+      "lines": 80
+    },
+    "exclude": [
+      "**/*.config.ts",
+      "**/*.d.ts",
+      "**/node_modules/**",
+      "**/.next/**"
+    ]
+  },
+
+  "bestPractices": {
+    "naming": [
+      "Use nomes descritivos para testes",
+      "Siga padrão: describe('ComponentName', () => { it('should do something') })",
+      "Use 'should' ou 'when/then' pattern"
+    ],
+    "structure": [
+      "Arrange (preparar)",
+      "Act (agir)",
+      "Assert (verificar)"
+    ],
+    "tips": [
+      "Teste comportamento, não implementação",
+      "Use data-testid apenas quando necessário",
+      "Mock apenas o necessário",
+      "Evite testes muito acoplados ao DOM",
+      "Prefira getByRole a getByTestId"
+    ]
+  },
+
+  "examples": {
+    "unit": {
+      "component": "tests/unit/Button.test.tsx",
+      "hook": "tests/unit/useAuth.test.tsx",
+      "utility": "tests/unit/formatDate.test.ts"
+    },
+    "integration": {
+      "page": "tests/integration/LoginPage.integration.test.tsx",
+      "apiRoute": "tests/integration/api-users.integration.test.ts"
+    },
+    "e2e": {
+      "flow": "tests/e2e/checkout-flow.spec.ts"
+    }
+  },
+
+  "commands": {
+    "unit": "vitest run tests/unit",
+    "integration": "vitest run tests/integration",
+    "e2e": "playwright test",
+    "all": "vitest run && playwright test",
+    "watch": "vitest watch",
+    "coverage": "vitest run --coverage",
+    "ui": "vitest --ui"
+  }
+}

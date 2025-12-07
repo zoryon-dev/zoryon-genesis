@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "name": "Zory-Component",
+  "description": "Gerador de componentes React padronizados",
+
+  "paths": {
+    "components": "src/components",
+    "atoms": "src/components/ui",
+    "molecules": "src/components/molecules",
+    "organisms": "src/components/organisms",
+    "compound": "src/components/compound",
+    "tests": "__tests__",
+    "stories": "stories"
+  },
+
+  "naming": {
+    "component": "PascalCase",
+    "file": "kebab-case",
+    "test": "{name}.test.tsx",
+    "story": "{name}.stories.tsx",
+    "styles": "{name}.module.css"
+  },
+
+  "defaults": {
+    "typescript": true,
+    "generateTest": true,
+    "generateStory": false,
+    "generateIndex": true,
+    "useForwardRef": false,
+    "exportType": "named"
+  },
+
+  "componentTypes": {
+    "atom": {
+      "description": "Elemento básico e indivisível (Button, Input, Badge, Icon)",
+      "examples": ["Button", "Input", "Label", "Badge", "Avatar", "Icon"],
+      "features": ["variants", "sizes", "asChild"],
+      "complexity": "low"
+    },
+    "molecule": {
+      "description": "Grupo de atoms que funcionam juntos (SearchBar, FormField, Card)",
+      "examples": ["SearchBar", "FormField", "Card", "Alert", "Toast"],
+      "features": ["variants", "composition", "slots"],
+      "complexity": "medium"
+    },
+    "organism": {
+      "description": "Seção complexa com múltiplos molecules (Header, Sidebar, DataTable)",
+      "examples": ["Header", "Sidebar", "DataTable", "Form", "Modal"],
+      "features": ["state", "context", "compound"],
+      "complexity": "high"
+    },
+    "compound": {
+      "description": "Componente composto com sub-componentes relacionados (Tabs, Accordion)",
+      "examples": ["Tabs", "Accordion", "Dialog", "DropdownMenu", "Select"],
+      "features": ["context", "composition", "implicit-state"],
+      "complexity": "high"
+    }
+  },
+
+  "variants": {
+    "common": ["default", "primary", "secondary", "destructive", "outline", "ghost"],
+    "sizes": ["sm", "md", "lg", "xl"],
+    "states": ["default", "hover", "focus", "active", "disabled", "loading"]
+  },
+
+  "techStack": {
+    "styling": "tailwind",
+    "variants": "cva",
+    "icons": "lucide-react",
+    "animation": "framer-motion",
+    "accessibility": "radix-ui"
+  }
+}
